@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dojo</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <style>
+        /*https://bootsnipp.com/snippets/featured/dropdown-userlist-plus-administration-v23*/
+        .table-user-information > tbody > tr {
+        border-top: 1px solid rgb(221, 221, 221);
+    }
+        .table-user-information > tbody > tr:first-child {
+        border-top: 0;
+    }
+        @media (min-width: 576px) {
+            .jumbotron {
+                padding: 2rem 1rem;
+            }
+        }
+        .jumbotron {
+            margin-bottom: 0;
+        }
+
+
+.table-user-information > tbody > tr > td {
+    border-top: 0;
+}
+        </style>
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8 offset-sm-2">
+                    <div>
+                        <div id="profile" class="panel">
+                            <h4>Session</h4>
+                            <div class="panel-body">
+                                <div class="media">
+                                        <img th:src="${ImageProfile}" class="align-self-center mr-3">
+                                    <div class="media-body">
+                                        <table class="table table-condensed table-responsive table-user-information">
+                                            <tbody>
+                                                <tr>
+                                                    <td><span id="role" th:text="${Role}"></span> : <span id="nomUtil" th:text="${Alias}"></span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ceinture <span id="ceinture" th:text="${Ceinture}"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div sec:authorize="isAnonymous()">
+                                    <hr />
+                                    <a href="/login" class="btn btn-primary">Ouvrir une session</a>
+                                </div>
+                                <div sec:authorize="isAuthenticated()">
+                                    <hr />
+                                    <form th:action="@{/logout}" method="post">
+                                        <button id="fermSession" type="submit" class="btn btn-primary">Fin de la session</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div id="Débogage" class="list-group">
+                            <h4 class="">Liens pour le débogage</h4>
+                            <p class="list-group-item">
+                                <a href="Avatar/liste" class="list-group-item list-group-item-info">Accèder
+                                    à la section Avatar</a>
+                                <a href="consoleBD" class="list-group-item list-group-item-info">Accèder
+                                    à la console BD</a>
+                                <a href="inscription" class="list-group-item list-group-item-info">Création compte</a>
+                            </p>
+                        </div>
+                        <br />
+                        <div id="ActionEcole" class="list-group">
+                            <h4>École</h4>
+                            <p class="list-group-item">
+                                <a href="NotreEcole" class="list-group-item list-group-item-info">Voir les membres de
+                                    notre école</a>
+                                <a href="kumite" class="list-group-item list-group-item-info">Accèder à la salle de
+                                    kumite (identifié)</a>
+                                <a href="PassageGrade" class="list-group-item list-group-item-info">Accèder au passage de
+                                    grades (sensei ou vénérable)</a>
+                            </p>
+                        </div>
+                        <br/>
+                        <div>
+                            <div id="Message" class="control-group">
+                                <h4>Message</h4>
+                                <iframe src="file" width="100%" height="400" ></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

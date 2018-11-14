@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <title>Passage de grades</title>
+    <style>
+        @media (min-width: 576px) {
+            .jumbotron {
+                padding: 2rem 1rem;
+            }
+        }
+        .jumbotron {
+            margin-bottom: 0;
+        }
+    </style>
+    <script src="https://fr.vuejs.org/js/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+ </head>
+<body>
+<div id="app" class="jumbotron jumbotron-fluid">
+    <div class="container-fluid">
+        <h3 class="text-center">Passage de grade</h3>
+        <a href="/" class="btn btn-primary">&laquo; Retour au dojo</a>
+        <br/><br/><br/>
+        <div id="divPasserExam" style="min-height: 150px;">
+            <h4>Passer examen</h4>
+            <div class="row-fluid">
+                <div  v-for="combCeint in arrPersonneExamCeinture" class="col-12" style="padding: .75rem 1.25rem; border: 1px solid rgba(0,0,0,.125); display: table;">
+                    <div class="media">
+                        <img :src="combCeint.compte.avatar.imgAvatar" class="align-self-center mr-3">
+                        <div class="media-body">
+                            <p>
+                                <span>{{combCeint.compte.alias}}</span> <span class="badge badge-danger" v-show="combCeint.booHonte">HONTE</span><br />
+                                Ceinture: <span>{{combCeint.compte.groupe}}</span><br />
+                                Courriel: <span>{{combCeint.compte.courriel}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-info" title="Passer examen" :id="combCeint.compte.courriel" onclick="app.passeExamen(this.id, true)">
+                                <span class="fa fa-check" aria-hidden="true"></span>
+                            </button>
+                            <br/><br/>
+                            <button type="button" class="btn btn-info" title="Échouer examen" :id="combCeint.compte.courriel" onclick="app.passeExamen(this.id, false)">
+                                <span class="fa fa-ban" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="divPromotionAnciens" style="min-height: 150px;">
+            <h4>Promotion ancien</h4>
+            <div class="row-fluid">
+                <div  v-for="combProm in arrPersonnePromotion" class="col-12" style="padding: .75rem 1.25rem; border: 1px solid rgba(0,0,0,.125); display: table;">
+                    <div class="media">
+                        <img :src="combProm.compte.avatar.imgAvatar" class="align-self-center mr-3">
+                        <div class="media-body">
+                            <p>
+                                <span>{{combProm.compte.alias}}</span> <span class="badge badge-danger" v-show="combProm.booHonte">HONTE</span><br />
+                                Ceinture: <span>{{combProm.compte.groupe}}</span><br />
+                                Courriel: <span>{{combProm.compte.courriel}}</span>
+                            </p>
+                        </div>
+                        <button type="button" class="btn btn-info" title="Promotion" :id="combProm.compte.courriel" onclick="app.optenirPromotionAncient(this.id)">
+                            <span class="fa fa-check" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div sec:authorize="hasAuthority('VENERABLE')" id="divCeintureNoire" style="min-height: 150px;">
+            <h4>Ceinture noire</h4>
+            <div class="row-fluid">
+                <div  v-for="combNoir in arrPersonneCeintureNoir" class="col-12" style="padding: .75rem 1.25rem; border: 1px solid rgba(0,0,0,.125); display: table;">
+                    <div class="media">
+                        <img :src="combNoir.avatar.imgAvatar" class="align-self-center mr-3">
+                        <div class="media-body">
+                            <p>
+                                <span>{{combNoir.alias}}</span><br />
+                                Ceinture: <span>{{combNoir.groupe}}</span><br />
+                                Courriel: <span>{{combNoir.courriel}}</span><br/>
+                                Role: <span>{{combNoir.role}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-info" title="Promotion" :id="combNoir.courriel" onclick="app.gestionRoleCeintureNoir(this.id, true)">
+                                <span class="fa fa-check" aria-hidden="true"></span>
+                            </button>
+                            <br/><br/>
+                            <button type="button" class="btn btn-info" title="Destitution"  :id="combNoir.courriel" onclick="app.gestionRoleCeintureNoir(this.id, false)">
+                                <span class="fa fa-ban" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var enTete = {
+        headers: {
+            'Content-Type': 'application/json; charset=UTF-8'
+        }
+    };
+    var app = new Vue({
+       el: "#app",
+       data:{
+           arrPersonneExamCeinture:[],
+           arrPersonnePromotion:[],
+           arrPersonneCeintureNoir:[],
+           examen: {
+               juger: "",
+               examinateur: "[[${profile.getCourriel()}]]",
+               reussit: ""
+           }
+       },
+       methods: {
+           passeExamen: function (personneJuger, verdict) {
+               this.examen.juger = personneJuger;
+               this.examen.reussit = verdict;
+
+               axios.post("http://127.0.0.1:8087/PassageGrade/examen", JSON.stringify(this.examen),enTete)
+                   .then(response => {
+                       alert('Info valide niveau serveur!! :-)');
+                       let intIndex = this.arrPersonneExamCeinture.findIndex(element => element.compte.courriel === personneJuger);
+
+                       //Permet de savoir le montant pour l'action effectuer et une promotion
+                       let intValeurPlafond = verdict ? 20 : 15;
+                       //Si la personne est aussi dans la liste des promotions d'ancien et qu'elle n'a plus les fonds ncessaire. Elle est retiré...
+                       if ((this.arrPersonneExamCeinture[intIndex].intSoldeCredit < intValeurPlafond) &&
+                           (this.arrPersonnePromotion.findIndex(element => element.compte.courriel === personneJuger)>=0)){
+                           this.arrPersonnePromotion.splice(this.arrPersonnePromotion.findIndex(element => element.compte.courriel === personneJuger),1);
+                       }
+
+                       this.arrPersonneExamCeinture.splice(intIndex,1);
+                   })
+                   .catch(error => {
+                   console.log(error)
+                    });
+           },
+           optenirPromotionAncient: function (personnePromu) {
+               axios.post("http://127.0.0.1:8087/PassageGrade/promotionAncien", personnePromu ,enTete)
+                   .then(response => {
+                       alert('Info valide niveau serveur!! :-)');
+
+                       let intIndex = this.arrPersonnePromotion.findIndex(element => element.compte.courriel === personnePromu);
+
+                       //Si la personne est aussi dans la liste des examen mais qu'elle n'a plus les fonds nécessaire, elle est retiré...
+                       if ((this.arrPersonnePromotion[intIndex].intSoldeCredit < 20) &&
+                           (this.arrPersonneExamCeinture.findIndex(element => element.compte.courriel === personnePromu)>= 0)) {
+
+                           this.arrPersonneExamCeinture.splice(this.arrPersonneExamCeinture.findIndex(element => element.compte.courriel === personnePromu),1);
+                       }
+
+                       this.arrPersonnePromotion.splice(intIndex, 1);
+                   })
+                   .catch(error => {
+                       console.log(error)
+                   });
+           },
+           gestionRoleCeintureNoir: function (personePromu, verdict) {
+               let strUrlPromotion = "http://127.0.0.1:8087/PassageGrade/promotionNoir";
+               let strUrlDestitution = "http://127.0.0.1:8087/PassageGrade/destitutionNoir";
+               let strUrl ="";
+
+               if (verdict) {
+                   strUrl = "http://127.0.0.1:8087/PassageGrade/promotionNoir";
+               }
+               else {
+                   strUrl = "http://127.0.0.1:8087/PassageGrade/destitutionNoir";
+               }
+
+               axios.post(strUrl, personePromu, enTete)
+                   .then(response => {
+                       alert('Info valide niveau serveur!! :-)');
+
+                       let intIndex = this.arrPersonneCeintureNoir.findIndex(element => element.courriel === personePromu);
+                       if (verdict) {
+                           this.arrPersonneCeintureNoir[intIndex].role = "SENSEI";
+                       }
+                       else {
+                           this.arrPersonneCeintureNoir[intIndex].role = "ANCIEN";
+                       }
+
+                   }).catch(error => {
+                    console.log(error);
+               });
+           }
+       },
+        mounted() {
+            axios.get("http://127.0.0.1:8087/PassageGrade/ExamenCeinturePoss")
+                .then(response => {
+                    this.arrPersonneExamCeinture = response.data.examen;
+                    this.arrPersonnePromotion = response.data.promotion;
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+            axios.get("http://127.0.0.1:8087/Compte/ceinture/noir")
+                .then(response => {
+                    this.arrPersonneCeintureNoir = response.data;
+
+                    //Retire le ou les vénérables
+                    this.arrPersonneCeintureNoir = this.arrPersonneCeintureNoir.filter(combatantNoir => combatantNoir.role !== "VENERABLE");
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
+    });
+</script>
+
+</body>
+</html>

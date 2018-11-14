@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Création Compte</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <script src="https://fr.vuejs.org/js/vue.js"></script>
+    <script src="https://unpkg.com/vue-select@latest"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vee-validate@2.0.9/dist/vee-validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vee-validate@2.0.9/dist/locale/fr.min.js"></script>
+    <style>
+        .v-select .dropdown-toggle .clear { visibility: hidden; }
+        @media (min-width: 576px) {
+            .jumbotron {
+                padding: 2rem 1rem;
+            }
+        }
+        .jumbotron {
+            margin-bottom: 0;
+        }
+    </style>
+
+    <script>
+        Vue.component('v-select', VueSelect.VueSelect);
+
+        const config = {
+            aria: true,
+            classNames: {},
+            classes: false,
+            delay: 0,
+            dictionary: {
+                fr: __vee_validate_locale__fr
+            },
+            errorBagName: 'errors', // change if property conflicts
+            events: 'input|blur',
+            fieldsBagName: 'fields',
+            i18n: null, // the vue-i18n plugin instance
+            i18nRootKey: 'validations', // the nested key under which the validation messages will be located
+            inject: true,
+            locale: 'fr',
+            validity: false
+        };
+
+        Vue.use(VeeValidate, config); // good to go.
+
+        const httpConfiguration = axios.create({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+
+    </script>
+</head>
+<body>
+<!--http://jasonwatmore.com/post/2018/08/01/vuejs-veevalidate-form-validation-example-->
+
+<div id="app" class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 offset-sm-2">
+
+                <div>
+                    <h1>Création Compte</h1>
+                    <form @submit.prevent="handleSubmit">
+                        <div class="form-group">
+                            <label for="tbCourriel" class="control-label"> Courriel : </label>
+                            <input v-validate="{required: true, email: true}" type="email" name="tbCourriel" id="tbCourriel"
+                                   v-model="utilisateur.courriel" class="form-control"
+                                   :class="{ 'is-invalid': soumettre && errors.has('tbCourriel') }"/>
+                            <div v-if="soumettre && errors.has('tbCourriel')" class="invalid-feedback">{{
+                                errors.first('tbCourriel') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tbMDP"> Mot de passe: </label>
+                            <input type="password" name="tbMDP" id="tbMDP" v-validate="{required: true, min: 6}" v-model="utilisateur.mdp" class="form-control" :class="{ 'is-invalid': soumettre && errors.has('tbMDP') }" ref="tbMDP"/>
+                            <div v-if="soumettre && errors.has('tbMDP')" class="invalid-feedback">{{
+                                errors.first('tbMDP') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tbMDPConfirm"> Confirmation MDP: </label>
+                            <input type="password" name="tbMDPConfirm" id="tbMDPConfirm" v-validate="{required:true, is: utilisateur.mdp}"  class="form-control" :class="{ 'is-invalid': soumettre && errors.has('tbMDPConfirm') }" data-vv-as="tbMDP"/>
+                            <div v-if="soumettre && errors.has('tbMDPConfirm')" class="invalid-feedback">{{
+                                errors.first('tbMDPConfirm') }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tbAlias"> Alias: </label>
+                            <input type="text" name="tbAlias" id="tbAlias" v-model="utilisateur.alias" v-validate="{required:true}" class="form-control" :class="{ 'is-invalid': soumettre && errors.has('tbAlias') }"/>
+                            <div v-if="soumettre && errors.has('tbAlias')"  class="invalid-feedback">{{
+                                errors.first('tbAlias') }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <!--
+                            <div class="input-group">
+
+                                <div class="input-group-addon">
+                                    <img :src="selection">
+                                </div>
+                                <div class="input-fields">
+                                    <label for="ddlAvatar"> Avatar: </label>
+                                    <select  class="selectpicker form-control" type="dropdown" v-model="selection" name="ddlAvatar" id="ddlAvatar">
+                                        <option v-for="avatar in arrAvatars" :value="avatar.imgAvatar">
+                                            {{avatar.nom}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div> -->
+                            <label for="ddlAvatar"> Avatar: </label>
+                            <v-select v-model="selection" :options="arrAvatars" label="nom" class="selectpicker" @input="majNomAvatar" id="ddlAvatar" name="ddlAvatar">
+                                <template slot="option" slot-scope="option">
+                                    <img :src="option.imgAvatar">
+                                    <!--<iframe src="https://giphy.com/embed/bEPXFiqJTQuASO9sVv" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>-->
+                                    {{option.nom}}
+                                </template>
+                            </v-select>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary">Inscription</button>
+                            <a href="/" class="btn btn-primary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            soumettre: false,
+            arrAvatars: [],
+            selection: '',
+            utilisateur: {
+                courriel: '',
+                mdp: '',
+                alias: '',
+                avatar: ''
+            }
+        },
+        methods: {
+            majNomAvatar() {
+                this.utilisateur.avatar = this.selection.nom;
+            },
+            handleSubmit(e) {
+                this.soumettre = true;
+                this.$validator.validate().then(valid => {
+                    if(valid) {
+                        alert('Info valide niveau client!! :-)\n\n' + JSON.stringify(this.utilisateur));
+                        var enTete = {
+                                headers: {
+                                    'Content-Type': 'application/json; charset=UTF-8'
+                                }
+                        };
+                        axios
+                            .post("http://127.0.0.1:8087/Compte/inscription", JSON.stringify(this.utilisateur),enTete)
+                            .then(response => {
+                            alert('Info valide niveau serveur!! :-)');
+                            location.href="http://127.0.0.1:8087";
+                        }).catch(error => {
+                            console.log(error)
+                    })
+                    }
+                }
+            );
+            }
+        },
+        mounted() {
+            axios
+                .get("http://127.0.0.1:8087/Avatar/liste")
+                .then(response => {
+                    this.arrAvatars = response.data,
+                    this.selection = this.arrAvatars[34]
+                })
+                .catch(error => {
+                        console.log(error)
+                })
+        }
+    });
+</script>
+</body>
+</html>

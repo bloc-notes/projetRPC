@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>File de message</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="https://fr.vuejs.org/js/vue.js"></script>
+</head>
+<body>
+<div>
+    <div id="main-content" class="container">
+        <div class="row">
+            <div class="col-md-6" sec:authorize="isAuthenticated()">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <input type="text" id="name" class="form-control" v-model="send_message" placeholder="Votre message ...">
+                        <div sec:authorize="hasAnyAuthority('SENSEI', 'VENERABLE', 'ANCIEN')">
+                            <button id="envoiePub" class="btn btn-primary" type="submit" @click.prevent="send('Publique')">Publique</button>
+                        </div>
+                        <button id="envoiePri" class="btn btn-primary" type="submit" @click.prevent="send('Prive')">Privé</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table id="conversation" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Messagerie instantanée</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="item in received_messages">
+                        <td>
+                            <div class="media">
+                                <img :src="item.img" class="align-self-center mr-3">
+                                <div class="media-body">
+                                    <span>[{{item.privilege}}] {{ item.contenu }} <br /><br /> {{item.date}}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        var file = new Vue({
+           el: "#main-content",
+            data: {
+                received_messages: [],
+                send_message: null,
+                connected: false,
+                expediteur: "[[${Courriel}]]"
+            },
+            methods: {
+                send: function(type) {
+                    if (this.stompClient && this.stompClient.connected && (type == "Publique")) {
+                        const msg = {de: this.expediteur, type: "Courriel", contenu: this.send_message, privilege: "publique"};
+                        this.stompClient.send("/app/messagePub", {},JSON.stringify(msg));
+                    }
+                    else if(this.stompClient && this.stompClient.connected && (type == "Prive")) {
+                        const msg = {de: this.expediteur, type: "Courriel", contenu: this.send_message, privilege: "prive"};
+                        this.stompClient.send("/app/messagePri", {},JSON.stringify(msg));
+                    }
+                },
+                connect() {
+                    this.socket = new SockJS("/webSocket");
+                    this.stompClient = Stomp.over(this.socket);
+                    this.stompClient.connect(
+                        {},
+                        frame => {
+                        this.connected = true;
+                    console.log(frame);
+                    this.stompClient.subscribe("/sujet/reponsePublique", tick => {
+                        console.log(tick);
+
+                    this.received_messages.unshift(JSON.parse(tick.body));
+                });
+                    var cour = "[[${Role}]]";
+                    if (cour != "") {
+                        this.stompClient.subscribe("/sujet/reponsePrive", tick => {
+                            console.log(tick);
+                        this.received_messages.unshift(JSON.parse(tick.body));
+                    });
+                    }
+
+                },
+                    error => {
+                        console.log(error);
+                        this.connected = false;
+                    }
+                );
+                },
+                disconnect() {
+                    if (this.stompClient) {
+                        this.stompClient.disconnect();
+                    }
+                    this.connected = false;
+                }
+            },
+            mounted() {
+                this.connect();
+            }
+        });
+    </script>
+</div>
+</body>
+</html>
