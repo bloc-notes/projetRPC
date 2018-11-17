@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/Compte")
@@ -43,6 +46,18 @@ public class ControleurCompte {
         EnumGroupe ceinture = EnumGroupe.valueOf(strCeinture.toUpperCase());
 
         return compteOad.findByGroupe(new Groupe(ceinture.ordinal() + 1, ceinture));
+    }
+
+    @GetMapping(value = "/tout")
+    public List<String> afficheToutCompte() {
+
+        List<Compte> lstCompte = compteOad.findAll();
+
+        List<String> lstCourriel = lstCompte.stream()
+                .map(Compte::getCourriel)
+                .collect(Collectors.toList());
+
+        return lstCourriel;
     }
 
 
