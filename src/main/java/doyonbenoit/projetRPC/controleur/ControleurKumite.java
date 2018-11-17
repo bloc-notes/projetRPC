@@ -156,7 +156,7 @@ public class ControleurKumite {
     @MessageMapping("/finCombat.{terminaison}")
     public void finCombat(@Payload String strVerdict, @DestinationVariable("terminaison") String strScenarioFin) {
         Combat combat = SalleCombat.getCombatEnCour();
-        combat.setDate(Calendar.getInstance().getTime());
+        combat.setDate(Calendar.getInstance().getTime().getTime());
 
         //Déroulement nominal (personne a quitté et l'arbite a rendu son verdique)
         if (strScenarioFin.equals("NORMAL")) {

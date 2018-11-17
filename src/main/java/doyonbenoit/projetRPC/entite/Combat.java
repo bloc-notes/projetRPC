@@ -10,7 +10,7 @@ public class Combat {
     private Compte cmArbite;
     private Compte cmBlanc;
     private Compte cmRouge;
-    private Date date;
+    private Long date;
     private Groupe ceintureBanc;
     private Groupe ceintureRouge;
     private Integer intGainPertePointBlanc;
@@ -38,25 +38,25 @@ public class Combat {
     }
 
     @ManyToOne
-    @JoinColumn(name = "arbite_courriel")
+    @JoinColumn(name = "arbitre_id")
     public Compte getCmArbite() {
         return cmArbite;
     }
 
     @ManyToOne
-    @JoinColumn(name = "blanc_courriel")
+    @JoinColumn(name = "blanc_id")
     public Compte getCmBlanc() {
         return cmBlanc;
     }
 
     @ManyToOne
-    @JoinColumn(name = "rouge_courriel")
+    @JoinColumn(name = "rouge_id")
     public Compte getCmRouge() {
         return cmRouge;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getDate() {
+    //@Temporal(TemporalType.TIMESTAMP)
+    public Long getDate() {
         return date;
     }
 
@@ -74,14 +74,17 @@ public class Combat {
         return ceintureRouge;
     }
 
+    @Column(name = "pointsBlanc")
     public Integer getIntGainPertePointBlanc() {
         return intGainPertePointBlanc;
     }
 
+    @Column(name = "pointsRouge")
     public Integer getIntGainPertePointRouge() {
         return intGainPertePointRouge;
     }
 
+    @Column(name = "creditsArbitre")
     public Integer getIntGainPerteCreditArbite() {
         return intGainPerteCreditArbite;
     }
@@ -102,7 +105,7 @@ public class Combat {
         this.cmRouge = cmRouge;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
