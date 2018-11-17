@@ -4,6 +4,7 @@ import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.OTD.CompteOtd;
 import doyonbenoit.projetRPC.entite.Compte;
 import doyonbenoit.projetRPC.entite.Groupe;
+import doyonbenoit.projetRPC.enumeration.EnumGroupe;
 import doyonbenoit.projetRPC.service.CompteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +40,9 @@ public class ControleurCompte {
 
     @GetMapping(value = "/ceinture/{strCeinture}")
     public List<Compte> afficheCompteParCeinture(@PathVariable String strCeinture){
-        Groupe ceinture = Groupe.valueOf(strCeinture.toUpperCase());
+        EnumGroupe ceinture = EnumGroupe.valueOf(strCeinture.toUpperCase());
 
-        return compteOad.findByGroupe(ceinture);
+        return compteOad.findByGroupe(new Groupe(ceinture.ordinal() + 1, ceinture));
     }
 
 

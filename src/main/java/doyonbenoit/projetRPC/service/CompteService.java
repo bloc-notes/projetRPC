@@ -6,6 +6,8 @@ import doyonbenoit.projetRPC.OTD.CompteOtd;
 import doyonbenoit.projetRPC.entite.Compte;
 import doyonbenoit.projetRPC.entite.Groupe;
 import doyonbenoit.projetRPC.entite.Role;
+import doyonbenoit.projetRPC.enumeration.EnumGroupe;
+import doyonbenoit.projetRPC.enumeration.EnumRole;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,8 +39,8 @@ public class CompteService {
             compte.setMotDePasse(mdpCrypter.encode(compteOtd.getMdp()));
             compte.setAlias(compteOtd.getAlias());
             compte.setAvatar(avatarOad.findByNom(compteOtd.getAvatar()).get(0));
-            compte.setRole(Role.NOUVEAU);
-            compte.setGroupe(Groupe.BLANC);
+            compte.setRole(new Role(EnumRole.NOUVEAU.ordinal() + 1,EnumRole.NOUVEAU));
+            compte.setGroupe( new Groupe(EnumGroupe.BLANCHE.ordinal() + 1, EnumGroupe.BLANCHE));
 
             compteOad.save(compte);
         }

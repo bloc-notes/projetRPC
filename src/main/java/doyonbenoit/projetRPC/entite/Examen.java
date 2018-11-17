@@ -7,12 +7,12 @@ import java.util.Date;
 @Table(name = "Examens")
 public class Examen {
     private Integer id;
-    private Date date;
+    private Long date;
     private Compte cmJuger;
     private Compte cmExaminateur;
     private Boolean booReussit;
 
-    public Examen(Date date, Compte cmJuger, Compte cmExaminateur, Boolean booReussit) {
+    public Examen(Long date, Compte cmJuger, Compte cmExaminateur, Boolean booReussit) {
         this.date = date;
         this.cmJuger = cmJuger;
         this.cmExaminateur = cmExaminateur;
@@ -28,23 +28,29 @@ public class Examen {
         return id;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    public Date getDate() {
+    //@Temporal(TemporalType.TIMESTAMP)
+    /*
+    public Date gObjDate() {
+        return date;
+    }*/
+
+    public Long getDate() {
         return date;
     }
 
     @ManyToOne
-    @JoinColumn(name = "courriel_Juger")
+    @JoinColumn(name = "evalue_id")
     public Compte getCmJuger() {
         return cmJuger;
     }
 
     @ManyToOne
-    @JoinColumn(name = "courriel_Examinateur")
+    @JoinColumn(name = "evaluateur_id")
     public Compte getCmExaminateur() {
         return cmExaminateur;
     }
 
+    @Column(name = "aReussi")
     public Boolean getBooReussit() {
         return booReussit;
     }
@@ -53,7 +59,12 @@ public class Examen {
         this.id = id;
     }
 
-    public void setDate(Date date) {
+    /*
+    public void sObjDate(Date date) {
+        this.date = date;
+    }*/
+
+    public void setDate(Long date) {
         this.date = date;
     }
 

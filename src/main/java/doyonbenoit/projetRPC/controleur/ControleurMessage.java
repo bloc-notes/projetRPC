@@ -51,7 +51,7 @@ public class ControleurMessage {
         String strCourriel = "";
         if (objPrincipal instanceof Utilisateur) {
             Compte compte = ((Utilisateur) objPrincipal).getCompte();
-            strRole = compte.getRole().name();
+            strRole = compte.getRole().getRole().name();
             strImg = compte.getAvatar().getImgAvatar();
             strCourriel = compte.getCourriel();
         }

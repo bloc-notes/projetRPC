@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -37,7 +37,7 @@
                                 <div class="media-body">
                                     <p>
                                         <span th:text="${membre.getAlias()}"></span><br />
-                                        Ceinture: <span th:text="${membre.getGroupe()}"></span><br />
+                                        Ceinture: <span th:text="${membre.getGroupe().getGroupe()}"></span><br />
                                         Courriel: <span th:text="${membre.getCourriel()}"></span>
                                     </p>
                                 </div>

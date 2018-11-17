@@ -1,4 +1,5 @@
 package doyonbenoit.projetRPC.entite;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -24,13 +25,14 @@ public class Compte {
         this.courriel = courriel;
         this.motDePasse = motDePasse;
         this.alias = alias;
-        this.role = Role.NOUVEAU;
+        //this.role = new Role()
     }
 
     public Compte() {
     }
 
     @Id
+    @Column(name = "username")
     public String getCourriel() {
         return courriel;
     }
@@ -39,6 +41,7 @@ public class Compte {
         this.courriel = courriel;
     }
 
+    @Column(name = "password")
     public String getMotDePasse() {
         return motDePasse;
     }
@@ -47,6 +50,7 @@ public class Compte {
         this.motDePasse = motDePasse;
     }
 
+    @Column(name = "fullname")
     public String getAlias() {
         return alias;
     }
@@ -55,7 +59,8 @@ public class Compte {
         this.alias = alias;
     }
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     public Role getRole() {
         return role;
     }
@@ -64,7 +69,8 @@ public class Compte {
         this.role = role;
     }
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "groupe_id")
     public Groupe getGroupe() {
         return groupe;
     }
@@ -74,7 +80,7 @@ public class Compte {
     }
 
     @ManyToOne
-    @JoinColumn(name = "avatar_nom")
+    @JoinColumn(name = "avatar_id")
     public Avatar getAvatar() {
         return avatar;
     }
@@ -87,10 +93,10 @@ public class Compte {
     @Override
     public String toString() {
         return "Compte{" +
-                ", courriel='" + courriel + '\'' +
+                "courriel='" + courriel + '\'' +
                 ", motDePasse='" + motDePasse + '\'' +
                 ", alias='" + alias + '\'' +
-                ", avatar=" + avatar.getNom() +
+                ", avatar=" + avatar +
                 ", role=" + role +
                 ", groupe=" + groupe +
                 '}';

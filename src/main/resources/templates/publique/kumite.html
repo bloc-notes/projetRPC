@@ -117,7 +117,7 @@
                         <img th:src="${profile.getAvatar().getImgAvatar()}" class="media-object">
                         <div class="media-body">
                             <span th:text="${profile.getAlias()}"></span><br/>
-                            Ceinture: <span th:text="${profile.getGroupe()}"></span>
+                            Ceinture: <span th:text="${profile.getGroupe().getGroupe()}"></span>
                             <span></span>
                         </div>
                     </div>
@@ -476,7 +476,7 @@
             },
            majPosition(){
                //Bloque l'envoie de changement de possition quand le levier (spectateur/attentecombat) est réinitialisé
-               if (this.Arbite != null ? (this.Arbite.courriel === this.CompteProfile.courriel ? false: true): true) {
+               if (this.Arbite != null ? (this.Arbite.courriel !== this.CompteProfile.courriel): true) {
                    if(this.Emplacement) {
                        this.envoie(typeEnvoieAttenteCombat);
                    }

@@ -3,10 +3,11 @@ package doyonbenoit.projetRPC.controleur;
 import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.OAD.ExamenOad;
 //import doyon.projetRPCA.entite.*;
+import doyonbenoit.projetRPC.entite.Role;
 import doyonbenoit.projetRPC.securite.Utilisateur;
 import doyonbenoit.projetRPC.entite.Compte;
 import doyonbenoit.projetRPC.entite.Examen;
-import doyonbenoit.projetRPC.entite.Role;
+import doyonbenoit.projetRPC.enumeration.EnumRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -48,8 +49,8 @@ public class ControleurMVC {
             Compte compte = ((Utilisateur) objPrincipal).getCompte();
             Compte compteMAJ = compteOAD.findByCourriel(compte.getCourriel());
             strAlias = compteMAJ.getAlias();
-            strRole = compteMAJ.getRole().name();
-            strCeinture = compteMAJ.getGroupe().name();
+            strRole = compteMAJ.getRole().getRole().name();
+            strCeinture = compteMAJ.getGroupe().getGroupe().name();
             strImage = compteMAJ.getAvatar().getImgAvatar();
         }
 
@@ -64,17 +65,17 @@ public class ControleurMVC {
     @GetMapping(value = "/NotreEcole")
     public String lstMembre(Map<String, Object> model)
     {
-        List<Compte> lstProf = compteOAD.findByRole(Role.SENSEI);
-        List<Compte> lstNouveau = compteOAD.findByRole(Role.NOUVEAU);
-        List<Compte> lstAncient = compteOAD.findByRole(Role.ANCIEN);
+        List<Compte> lstProf = compteOAD.findByRole(new Role(EnumRole.SENSEI.ordinal() + 1,EnumRole.SENSEI));
+        List<Compte> lstNouveau = compteOAD.findByRole(new Role(EnumRole.NOUVEAU.ordinal() + 1,EnumRole.NOUVEAU));
+        List<Compte> lstAncient = compteOAD.findByRole(new Role(EnumRole.ANCIEN.ordinal()+ 1,EnumRole.ANCIEN));
 
-        List<Compte> venerable = compteOAD.findByRole(Role.VENERABLE);
+        List<Compte> venerable = compteOAD.findByRole(new Role(EnumRole.VENERABLE.ordinal() + 1,EnumRole.VENERABLE));
 
         //Détermine les combatants de la honte et les exclus ...
         List<Compte> lstHonte = new ArrayList<>();
-        List<Compte> lstHonteAncient =  lstAncient.stream().filter(combatant -> examenOad.findByCmJugerOrderByDateDesc(combatant).getBooReussit() == true).collect(Collectors.toList());
+        List<Compte> lstHonteAncient =  lstAncient.stream().filter(combatant -> !examenOad.findFirstByCmJugerOrderByDateDesc(combatant).getBooReussit()).collect(Collectors.toList());
         List<Compte> lstHonteNouveau =  lstNouveau.stream().filter(combatant -> {
-            Optional<Examen> opExam = Optional.ofNullable(examenOad.findByCmJugerOrderByDateDesc(combatant));
+            Optional<Examen> opExam = Optional.ofNullable(examenOad.findFirstByCmJugerOrderByDateDesc(combatant));
             if (opExam.isPresent()) {
                 return !opExam.get().getBooReussit();
             }

@@ -60,12 +60,16 @@ public class Combat {
         return date;
     }
 
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "ceintureBlanc_id")
     public Groupe getCeintureBanc() {
         return ceintureBanc;
     }
 
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "ceintureRouge_id")
     public Groupe getCeintureRouge() {
         return ceintureRouge;
     }

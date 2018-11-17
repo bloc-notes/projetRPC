@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface ExamenOad extends CrudRepository<Examen,Integer> {
     List<Examen> findByCmJugerAndBooReussitOrderByDateDesc(Compte compte, Boolean booReussit);
-    Examen findByCmJugerOrderByDateDesc(Compte compte);
+    Examen findFirstByCmJugerOrderByDateDesc(Compte compte);
 }

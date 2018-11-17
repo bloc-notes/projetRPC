@@ -1,14 +1,12 @@
 package doyonbenoit.projetRPC.entite;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "Avatar")
 public class Avatar {
 
+    private Integer id;
     private String nom;
     private String imgAvatar;
 
@@ -21,6 +19,15 @@ public class Avatar {
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getNom() {
         return nom;
     }
@@ -29,7 +36,7 @@ public class Avatar {
         this.nom = nom;
     }
 
-    @Column(name = "Avatar", columnDefinition = "TEXT")
+    @Column(name = "AVATAR", columnDefinition = "TEXT")
     public String getImgAvatar() {
         return imgAvatar;
     }
@@ -41,7 +48,8 @@ public class Avatar {
     @Override
     public String toString() {
         return "Avatar{" +
-                "nom='" + nom + '\'' +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
                 ", imgAvatar='" + imgAvatar + '\'' +
                 '}';
     }

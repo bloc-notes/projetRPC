@@ -3,6 +3,7 @@ package doyonbenoit.projetRPC.OAD;
 import doyonbenoit.projetRPC.entite.Compte;
 import doyonbenoit.projetRPC.entite.Groupe;
 import doyonbenoit.projetRPC.entite.Role;
+import doyonbenoit.projetRPC.enumeration.EnumGroupe;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

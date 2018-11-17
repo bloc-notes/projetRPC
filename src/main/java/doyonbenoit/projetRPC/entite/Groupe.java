@@ -1,63 +1,39 @@
 package doyonbenoit.projetRPC.entite;
 
-public enum Groupe {
-    BLANC,
-    JAUNE,
-    ORANGE,
-    VERT,
-    BLEU,
-    MARRON,
-    NOIR;
+import doyonbenoit.projetRPC.enumeration.EnumGroupe;
 
-    /**
-     * Calcule valide pour la première ceinture
-     */
-    public int nbPointSelonCeinture(Groupe ceinture2) {
-        int intDifference = ceinture2.ordinal() - this.ordinal();
-        int intNbPointPossible = 0;
+import javax.persistence.*;
 
-        switch (intDifference) {
-            case -6:
-                intNbPointPossible = 1;
-                break;
-            case -5:
-                intNbPointPossible = 2;
-                break;
-            case -4:
-                intNbPointPossible = 3;
-                break;
-            case -3:
-                intNbPointPossible = 5;
-                break;
-            case -2:
-                intNbPointPossible = 7;
-                break;
-            case -1:
-                intNbPointPossible = 9;
-                break;
-            case 0:
-                intNbPointPossible = 10;
-                break;
-            case 1:
-                intNbPointPossible = 12;
-                break;
-            case 2:
-                intNbPointPossible = 15;
-                break;
-            case 3:
-                intNbPointPossible = 20;
-                break;
-            case 4:
-                intNbPointPossible = 25;
-                break;
-            case 5:
-                intNbPointPossible = 30;
-                break;
-            case 6:
-                intNbPointPossible = 50;
-                break;
-        }
+@Entity
+@Table(name = "GROUPES")
+public class Groupe {
+    private Integer id;
+    private EnumGroupe groupe;
 
-        return intNbPointPossible;
+    public Groupe(Integer id, EnumGroupe groupe) {
+        this.id = id;
+        this.groupe = groupe;
+    }
+
+    public Groupe() {
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Enumerated(EnumType.STRING)
+    public EnumGroupe getGroupe() {
+        return groupe;
+    }
+
+    public void setGroupe(EnumGroupe groupe) {
+        this.groupe = groupe;
     }
 }

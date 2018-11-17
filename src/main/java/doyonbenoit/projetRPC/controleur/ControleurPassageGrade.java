@@ -6,6 +6,8 @@ import doyonbenoit.projetRPC.OAD.ExamenOad;
 import doyonbenoit.projetRPC.OTD.ExamenOtd;
 //import doyon.projetRPCA.entite.*;
 import doyonbenoit.projetRPC.entite.*;
+import doyonbenoit.projetRPC.enumeration.EnumGroupe;
+import doyonbenoit.projetRPC.enumeration.EnumRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +53,7 @@ public class ControleurPassageGrade {
 
             //à un examen réussit
             if (lstExamenAnterieurReussit.size() >= 1) {
-                Date dateDebut = lstExamenAnterieurReussit.get(0).getDate();
+                Date dateDebut = new Date(lstExamenAnterieurReussit.get(0).getDate());
                 Date dateActuel = Calendar.getInstance().getTime();
                 //lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqual(dateActuel,dateDebut);
                 lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqualAndAndCmBlancOrCmRouge(dateActuel,dateDebut,compte,compte);
@@ -84,17 +86,17 @@ public class ControleurPassageGrade {
             //Remplit les conditions de 100 points et 10 credits pour passer son examen de ceinture ...
             //Ajouter -10 si ancient ....
             int intSoldeTotal = 0;
-            intSoldeTotal -= compte.getRole().ordinal() >= Role.ANCIEN.ordinal() ? 10 : 0;
+            intSoldeTotal -= compte.getRole().getRole().ordinal() >= EnumRole.ANCIEN.ordinal() ? 10 : 0;
             intSoldeTotal += intSoldeArbitrage + intSoldeExamen;
-            if (!compte.getGroupe().equals(Groupe.NOIR) && (intSoldeTotal >= 10) && (intNbPointCombat >= 100 )) {
+            if (!compte.getGroupe().getGroupe().equals(EnumGroupe.NOIRE) && (intSoldeTotal >= 10) && (intNbPointCombat >= 100 )) {
                 //Est dans la honte?
-                Examen dernierExamen = examenOad.findByCmJugerOrderByDateDesc(compte);
+                Examen dernierExamen = examenOad.findFirstByCmJugerOrderByDateDesc(compte);
                 boolean booReussit = dernierExamen != null && !dernierExamen.getBooReussit();
 
                 lstCmValidePourExamen.add(new ReponseExamen(compte, intSoldeTotal, booReussit));
             }
 
-            if ((compte.getRole().ordinal() < Role.ANCIEN.ordinal()) && (intSoldeTotal >= 10) && intNbCombatArbitrer >= 30) {
+            if ((compte.getRole().getRole().ordinal() + 1 < EnumRole.ANCIEN.ordinal() + 1) && (intSoldeTotal >= 10) && intNbCombatArbitrer >= 30) {
                 lstCmValidePourPromotion.add(new ReponseExamen(compte,intSoldeTotal));
             }
 
@@ -114,7 +116,7 @@ public class ControleurPassageGrade {
         Compte compteExaminateur = compteOAD.findByCourriel(examenOtd.getExaminateur());
 
         Examen examen = new Examen();
-        examen.setDate(Calendar.getInstance().getTime());
+        examen.setDate(Calendar.getInstance().getTime().getTime());
         examen.setCmJuger(compteJuger);
         examen.setCmExaminateur(compteExaminateur);
         examen.setBooReussit(examenOtd.getReussit());
@@ -123,9 +125,10 @@ public class ControleurPassageGrade {
             valeurRetour = ResponseEntity.ok().build();
 
             if (examenOtd.getReussit()) {
-                int intRangCeinture= compteJuger.getGroupe().ordinal();
+                int intRangCeinture= compteJuger.getGroupe().getGroupe().ordinal();
 
-                compteJuger.setGroupe(Groupe.values()[intRangCeinture + 1]);
+                EnumGroupe gpSuivant = EnumGroupe.values()[intRangCeinture + 1];
+                compteJuger.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
 
                 compteOAD.save(compteJuger);
             }
@@ -143,7 +146,7 @@ public class ControleurPassageGrade {
 
         Compte compteFuturAncien = compteOAD.findByCourriel(strCourriel);
 
-        compteFuturAncien.setRole(Role.ANCIEN);
+        compteFuturAncien.setRole(new Role(EnumRole.ANCIEN.ordinal() + 1,EnumRole.ANCIEN));
 
         if (!compteOAD.save(compteFuturAncien).equals(null)) {
             valeurRetour = ResponseEntity.ok().build();
@@ -161,7 +164,7 @@ public class ControleurPassageGrade {
         Compte comptePromotion = compteOAD.findByCourriel(strCourriel);
 
         if (comptePromotion != null) {
-            comptePromotion.setRole(Role.SENSEI);
+            comptePromotion.setRole(new Role(EnumRole.SENSEI.ordinal() + 1,EnumRole.SENSEI));
             compteOAD.save(comptePromotion);
             valeurRetour = ResponseEntity.ok().build();
         }
@@ -178,7 +181,7 @@ public class ControleurPassageGrade {
         Compte compteDestitution = compteOAD.findByCourriel(strCourriel);
 
         if (compteDestitution != null) {
-            compteDestitution.setRole(Role.ANCIEN);
+            compteDestitution.setRole(new Role(EnumRole.ANCIEN.ordinal() + 1,EnumRole.ANCIEN));
             compteOAD.save(compteDestitution);
             valeurRetour = ResponseEntity.ok().build();
         }
