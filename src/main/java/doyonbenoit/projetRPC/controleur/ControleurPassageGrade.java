@@ -125,7 +125,7 @@ public class ControleurPassageGrade {
             valeurRetour = ResponseEntity.ok().build();
 
             if (examenOtd.getReussit()) {
-                int intRangCeinture= compteJuger.getGroupe().getGroupe().ordinal();
+                int intRangCeinture= compteJuger.getGroupe().getId();
 
                 EnumGroupe gpSuivant = EnumGroupe.values()[intRangCeinture + 1];
                 compteJuger.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
@@ -194,10 +194,7 @@ public class ControleurPassageGrade {
 
     @GetMapping(value = "/{courriel}.{booPasseOuCoule}")
     public Boolean PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
-        /*Boolean booPasseOuCoule = false;
-        if (PasseOuCoule.equals("true")){
-            booPasseOuCoule = true;
-        }*/
+        System.err.println("IL MANQUE DE VÉRIFIER LES 100 PTS ET LES 10 CRÉDITS");
         Compte compteJuger = compteOAD.findByCourriel(courriel);
         Compte compteExaminateur = compteOAD.findByCourriel("v1@dojo");
         if (compteJuger.getGroupe().getId()<7) {
@@ -205,16 +202,35 @@ public class ControleurPassageGrade {
             examen.setDate(Calendar.getInstance().getTime().getTime());
             examen.setCmJuger(compteJuger);
             examen.setCmExaminateur(compteExaminateur);
-            examen.setBooReussit(booPasseOuCoule);
+            examen.setBooReussit(!booPasseOuCoule);
             examen.setCeinture(compteJuger.getGroupe());
             examenOad.save(examen);
-            if (booPasseOuCoule) {
-                int intRangCeinture = compteJuger.getGroupe().getGroupe().ordinal();
+            if (!booPasseOuCoule) {
+                int intRangCeinture = compteJuger.getGroupe().getId();
                 EnumGroupe gpSuivant = EnumGroupe.values()[intRangCeinture + 1];
                 compteJuger.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
                 compteOAD.save(compteJuger);
             }
+            return true;
+        }else {
+            return false;
         }
-        return false;
+    }
+    @GetMapping(value = "/Ancien.{courriel}")
+    public Boolean PasserAAncien(@PathVariable String courriel) {
+        System.out.println("Entre");
+        Compte compte = compteOAD.findByCourriel(courriel);
+        if (compte.getRole().getRole().equals(EnumRole.NOUVEAU)){
+            int intRole = compte.getRole().getId();
+            System.out.println(intRole);
+            EnumRole roleSuivant = EnumRole.values()[intRole + 1];
+            System.out.println(roleSuivant);
+            compte.setRole(new Role(roleSuivant.ordinal(), roleSuivant));
+            System.out.println(compte.getRole().toString());
+            compteOAD.save(compte);
+            return true;
+        }else{
+            return false;
+        }
     }
 }
