@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CombatOad extends CrudRepository<Combat,Integer> {
-    List<Combat> findByDateLessThanEqualAndDateGreaterThanEqualAndAndCmBlancOrCmRouge(Date dateFin, Date dateDebut, Compte blanc, Compte rouge);
+    List<Combat> findByDateLessThanEqualAndDateGreaterThanEqualAndAndCmBlancOrCmRouge(Long dateFin, Long dateDebut, Compte blanc, Compte rouge);
     List<Combat> findByCmBlancOrAndCmRouge(Compte blanc, Compte rouge);
     List<Combat> findByCmArbite(Compte arbite);
 }

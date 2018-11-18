@@ -87,8 +87,8 @@ public class ControleurCompte {
 
         //à un examen réussit
         if (lstExamenAnterieurReussit.size() >= 1) {
-            Date dateDebut = new Date(lstExamenAnterieurReussit.get(0).getDate());
-            Date dateActuel = Calendar.getInstance().getTime();
+            Long dateDebut = lstExamenAnterieurReussit.get(0).getDate();
+            Long dateActuel = Calendar.getInstance().getTime().getTime();
             //lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqual(dateActuel,dateDebut);
             lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqualAndAndCmBlancOrCmRouge(dateActuel,dateDebut,compte,compte);
         }
