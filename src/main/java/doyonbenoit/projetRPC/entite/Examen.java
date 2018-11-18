@@ -11,6 +11,7 @@ public class Examen {
     private Compte cmJuger;
     private Compte cmExaminateur;
     private Boolean booReussit;
+    private Groupe ceinture;
 
     public Examen(Long date, Compte cmJuger, Compte cmExaminateur, Boolean booReussit) {
         this.date = date;
@@ -55,6 +56,12 @@ public class Examen {
         return booReussit;
     }
 
+    @ManyToOne
+    @JoinColumn(name="ceinture_id" )
+    public Groupe getCeinture() {
+        return ceinture;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -78,5 +85,9 @@ public class Examen {
 
     public void setBooReussit(Boolean booReussit) {
         this.booReussit = booReussit;
+    }
+
+    public void setCeinture(Groupe ceinture) {
+        this.ceinture = ceinture;
     }
 }

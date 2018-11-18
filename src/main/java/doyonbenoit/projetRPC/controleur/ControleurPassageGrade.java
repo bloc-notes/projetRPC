@@ -206,7 +206,7 @@ public class ControleurPassageGrade {
             examen.setCmJuger(compteJuger);
             examen.setCmExaminateur(compteExaminateur);
             examen.setBooReussit(booPasseOuCoule);
-            //examen.setCeinture(compteJuger.getGroupe().getId());
+            examen.setCeinture(compteJuger.getGroupe());
             examenOad.save(examen);
             if (booPasseOuCoule) {
                 int intRangCeinture = compteJuger.getGroupe().getGroupe().ordinal();
