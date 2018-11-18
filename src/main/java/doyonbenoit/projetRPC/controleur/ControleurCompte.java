@@ -123,7 +123,8 @@ public class ControleurCompte {
         intSoldeTotal -= compte.getRole().getRole().ordinal() >= EnumRole.ANCIEN.ordinal() ? 10 : 0;
         intSoldeTotal += intSoldeArbitrage + intSoldeExamen;
 
-        //courriel,avatar(nom),nbPoint,Groupe(nom),Role(nom)
+
+        //Objet a envoyer
         compteComplet.put("Compte", compte);
         compteComplet.put("NbPoint", intNbPointCombat);
         compteComplet.put("Credit", intSoldeTotal);
