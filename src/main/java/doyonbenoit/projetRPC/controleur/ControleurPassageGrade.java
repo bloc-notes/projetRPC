@@ -191,4 +191,30 @@ public class ControleurPassageGrade {
 
         return valeurRetour;
     }
+
+    @GetMapping(value = "/{courriel}.{booPasseOuCoule}")
+    public Boolean PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
+        /*Boolean booPasseOuCoule = false;
+        if (PasseOuCoule.equals("true")){
+            booPasseOuCoule = true;
+        }*/
+        Compte compteJuger = compteOAD.findByCourriel(courriel);
+        Compte compteExaminateur = compteOAD.findByCourriel("v1@dojo");
+        if (compteJuger.getGroupe().getId()<7) {
+            Examen examen = new Examen();
+            examen.setDate(Calendar.getInstance().getTime().getTime());
+            examen.setCmJuger(compteJuger);
+            examen.setCmExaminateur(compteExaminateur);
+            examen.setBooReussit(booPasseOuCoule);
+            //examen.setCeinture(compteJuger.getGroupe().getId());
+            examenOad.save(examen);
+            if (booPasseOuCoule) {
+                int intRangCeinture = compteJuger.getGroupe().getGroupe().ordinal();
+                EnumGroupe gpSuivant = EnumGroupe.values()[intRangCeinture + 1];
+                compteJuger.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
+                compteOAD.save(compteJuger);
+            }
+        }
+        return false;
+    }
 }

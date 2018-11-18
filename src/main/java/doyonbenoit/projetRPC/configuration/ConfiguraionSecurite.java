@@ -53,7 +53,7 @@ public class ConfiguraionSecurite extends WebSecurityConfigurerAdapter {
         //permettre toutes les requêtes
         http.authorizeRequests()
                 .antMatchers("/kumite/**").authenticated()
-                .antMatchers("/PassageGrade/**").hasAnyAuthority("SENSEI","VENERABLE")
+                //.antMatchers("/PassageGrade/**").hasAnyAuthority("SENSEI","VENERABLE")
                 .and()
                 .csrf()
                 .ignoringAntMatchers("/Compte/**", "/PassageGrade/**")

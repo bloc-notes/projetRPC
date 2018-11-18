@@ -71,7 +71,6 @@ public class ControleurCompte {
     public HashMap<String,Object> afficheComptePointCredit(@PathVariable String courriel) {
         HashMap<String,Object> compteComplet = new HashMap<>();
         Compte compte = compteOad.findByCourriel(courriel);
-
         //Trouve tout ses examens échouer
         List<Examen> lstExamenAnterieurEchouer = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte, Boolean.FALSE);
         int intNbExamenEchouer = lstExamenAnterieurEchouer.size();
@@ -130,6 +129,4 @@ public class ControleurCompte {
         compteComplet.put("Credit", intSoldeTotal);
         return compteComplet;
     }
-
-
 }

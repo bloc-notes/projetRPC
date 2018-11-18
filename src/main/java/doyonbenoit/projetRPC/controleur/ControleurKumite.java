@@ -171,7 +171,7 @@ public class ControleurKumite {
                 Compte cmGagnant = combat.getCmRouge();
                 Compte cmPerdant = combat.getCmBlanc();
 
-                combat.setIntGainPertePointBlanc(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
+                combat.setIntGainPertePointRouge(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
                 combat.setIntGainPerteCreditArbite(1);
             }
             //Égalité
@@ -213,7 +213,7 @@ public class ControleurKumite {
                 Compte cmGagnant = combat.getCmRouge();
                 Compte cmPerdant = combat.getCmBlanc();
 
-                combat.setIntGainPertePointBlanc(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
+                combat.setIntGainPertePointRouge(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
 
                 combat.setIntGainPerteCreditArbite(1);
             }
