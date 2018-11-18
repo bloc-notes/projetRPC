@@ -97,9 +97,11 @@ public class ControleurCompte {
 
         //Calcule le nombre de points
         Map<Compte,Integer> mapBlanc = lstCombat.stream()
+                .filter(combat -> combat.getCmBlanc().getCourriel().equalsIgnoreCase(courriel))
                 .collect(Collectors.groupingBy(Combat::getCmBlanc, Collectors.summingInt(Combat::getIntGainPertePointBlanc)));
 
         Map<Compte, Integer> mapRouge = lstCombat.stream()
+                .filter(combat -> combat.getCmRouge().getCourriel().equalsIgnoreCase(courriel))
                 .collect(Collectors.groupingBy(Combat::getCmRouge, Collectors.summingInt(Combat::getIntGainPertePointRouge)));
 
         //Total
