@@ -36,4 +36,12 @@ public class Groupe {
     public void setGroupe(EnumGroupe groupe) {
         this.groupe = groupe;
     }
+
+    @Override
+    public String toString() {
+        return "Groupe{" +
+                "id=" + id +
+                ", groupe=" + groupe +
+                '}';
+    }
 }
