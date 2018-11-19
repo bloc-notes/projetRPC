@@ -134,10 +134,10 @@ public class Combat {
     public String toString() {
         return "Combat{" +
                 "id=" + id +
-                ", cmArbite=" + cmArbite +
-                ", cmBlanc=" + cmBlanc +
-                ", cmRouge=" + cmRouge +
-                ", date=" + date +
+                ", cmArbite=" + cmArbite.getCourriel() +
+                ", cmBlanc=" + cmBlanc.getCourriel() +
+                ", cmRouge=" + cmRouge.getCourriel() +
+                ", date=" + new Date(date).toString()+
                 ", ceintureBanc=" + ceintureBanc +
                 ", ceintureRouge=" + ceintureRouge +
                 '}';

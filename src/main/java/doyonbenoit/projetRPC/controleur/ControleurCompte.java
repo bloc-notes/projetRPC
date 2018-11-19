@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -77,6 +78,7 @@ public class ControleurCompte {
 
         //Trouver tout ses examens réussit
         List<Examen> lstExamenAnterieurReussit = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte,Boolean.TRUE);
+        lstExamenAnterieurReussit.forEach(System.out::println);
         int intNbExamenReussit = lstExamenAnterieurReussit.size();
 
         //Solde des examens
@@ -86,13 +88,20 @@ public class ControleurCompte {
 
         //à un examen réussit
         if (lstExamenAnterieurReussit.size() >= 1) {
+            System.out.println("POSSEDE UN EXAMEN");
             Long dateDebut = lstExamenAnterieurReussit.get(0).getDate();
             Long dateActuel = Calendar.getInstance().getTime().getTime();
+
             //lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqual(dateActuel,dateDebut);
-            lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqualAndAndCmBlancOrCmRouge(dateActuel,dateDebut,compte,compte);
+            List<Combat> lstcmBlanc = combatOad.findByDateGreaterThanEqualAndCmBlanc(dateDebut,compte);
+            List<Combat> lstcmRouge = combatOad.findByDateGreaterThanEqualAndCmRouge(dateDebut, compte);
+
+            //lstCombat = combatOad.findByDateGreaterThanAndCmBlancOrCmRouge(dateDebut,compte,compte);
+            lstCombat = Stream.concat(lstcmBlanc.stream(),lstcmRouge.stream()).distinct().collect(Collectors.toList());
+
         }
         else {
-            lstCombat = combatOad.findByCmBlancOrAndCmRouge(compte,compte);
+            lstCombat = combatOad.findByCmBlancOrCmRouge(compte,compte);
         }
 
         //Calcule le nombre de points

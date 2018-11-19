@@ -90,4 +90,16 @@ public class Examen {
     public void setCeinture(Groupe ceinture) {
         this.ceinture = ceinture;
     }
+
+    @Override
+    public String toString() {
+        return "Examen{" +
+                "id=" + id +
+                ", date=" + new Date(date).toString() +
+                ", cmJuger=" + cmJuger.getCourriel() +
+                ", cmExaminateur=" + cmExaminateur.getCourriel() +
+                ", booReussit=" + booReussit +
+                ", ceinture=" + ceinture +
+                '}';
+    }
 }
