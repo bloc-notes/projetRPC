@@ -57,7 +57,7 @@ public class ControleurCompte {
     }
 
     @GetMapping(value = "/tout")
-    public List<String> afficheToutCompte() {
+    public HashMap<String, List> afficheToutCompte() {
 
         List<Compte> lstCompte = compteOad.findAll();
 
@@ -65,7 +65,10 @@ public class ControleurCompte {
                 .map(Compte::getCourriel)
                 .collect(Collectors.toList());
 
-        return lstCourriel;
+        HashMap<String,List> courriel = new HashMap<>();
+        courriel.put("lstCourriel", lstCourriel);
+
+        return courriel;
     }
 
     @GetMapping(value = "/PointCredit/{courriel}")
