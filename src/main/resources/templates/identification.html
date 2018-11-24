@@ -57,7 +57,7 @@
 <section class="container login-form">
     <h3 class="text-center">Veuillez vous identifier</h3>
     <section>
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/connexion}" method="post">
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text bg-white fa fa-user"></span>
@@ -68,7 +68,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text bg-white fa fa-lock"></span>
                 </div>
-                <input type="password" name="password" required class="form-control" placeholder="Enter votre mot de passe" value="a" />
+                <input type="password" name="password" required class="form-control" placeholder="Enter votre mot de passe" value="Patate123" />
             </div>
             <br/>
             <div th:if="${param.error}" class="text-danger">

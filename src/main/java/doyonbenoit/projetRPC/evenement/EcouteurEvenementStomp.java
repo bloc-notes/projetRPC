@@ -29,14 +29,19 @@ public class EcouteurEvenementStomp implements ApplicationListener<SessionConnec
 
     @Override
     public void onApplicationEvent(SessionConnectedEvent event) {
+        //System.out.println("Connexion?");
+
         if (event.getUser() != null) {
             String strUtilisateurId = event.getUser().getName();
             StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
             boolean isConnect = sha.getCommand() == StompCommand.CONNECT;
             boolean isDisconnect = sha.getCommand() == StompCommand.DISCONNECT;
 
+            /*
             logger.debug("Connect: " + isConnect + ",disconnect:" + isDisconnect + ", event [sessionId: " + sha.getSessionId() + ";" + strUtilisateurId + " ,command="
-                    + sha.getCommand());
+                    + sha.getCommand());*/
+
+            //System.out.println("Utilisateur: " + strUtilisateurId + " [Entre]");
         }
     }
 
@@ -44,12 +49,12 @@ public class EcouteurEvenementStomp implements ApplicationListener<SessionConnec
     public void onSocketDisconnected(SessionDisconnectEvent event) {
         StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
         if(sha.getUser() != null) {
-            logger.info("[Disonnected] " + sha.getUser().getName());
+            //logger.info("[Disonnected] " + sha.getUser().getName());
 
             ActionDeplacement acDep = SalleCombat.estDansSalle(sha.getUser().getName());
             if (acDep != null) {
-                System.out.println(acDep.toString());
-                System.out.println("Quitte la salle ...");
+                //System.out.println(acDep.toString());
+                //System.out.println("Quitte la salle ...");
                 controleurKumite.quitterSalle(acDep,sha.getUser().getName());
             }
         }
@@ -60,13 +65,14 @@ public class EcouteurEvenementStomp implements ApplicationListener<SessionConnec
 
         StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
         if(sha.getUser() != null) {
-            logger.info("[Connected] " + sha.getUser().getName());
+            //logger.info("[Connected] " + sha.getUser().getName());
 
             String strTest = "{url=[http://127.0.0.1:8087/kumite], accept-version=[1.1,1.0], heart-beat=[10000,10000]}";
 
-            System.out.println("[----------------------");
+
+            //System.out.println("[----------------------");
             String strEnTete = pageDeEvenement(event);
-            System.out.println("----------------------]");
+            //System.out.println("----------------------]");
 
             if (strTest.equals(strEnTete)) {
                 controleurKumite.enterSalle(sha.getUser().getName().toString());
@@ -81,7 +87,7 @@ public class EcouteurEvenementStomp implements ApplicationListener<SessionConnec
         accessor.getMessageHeaders();
         Object header = accessor.getHeader("simpConnectMessage");
         GenericMessage<?> generic = (GenericMessage<?>) accessor.getHeader("simpConnectMessage");
-        System.out.println(generic.getHeaders().get("nativeHeaders").toString());
+        //System.out.println(generic.getHeaders().get("nativeHeaders").toString());
         Object nativeHeaders = generic.getHeaders().get("nativeHeaders");
         return nativeHeaders.toString();
     }
