@@ -4,5 +4,6 @@ public enum EnumRole {
     NOUVEAU,
     ANCIEN,
     SENSEI,
-    VENERABLE
+    VENERABLE,
+    ANONYME
 }

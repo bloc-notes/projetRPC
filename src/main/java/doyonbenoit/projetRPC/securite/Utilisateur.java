@@ -15,7 +15,7 @@ public class Utilisateur extends User {
                 true,
                 true,
                 true,
-                ImmutableSet.of(new SimpleGrantedAuthority(compte.getRole().getRole().name())));
+                ImmutableSet.of(new SimpleGrantedAuthority(!compte.equals(null) ? compte.getRole().getRole().name(): "anonyme")));
 
         this.compte = compte;
     }

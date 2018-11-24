@@ -1,5 +1,7 @@
 package doyonbenoit.projetRPC.entite;
 
+import doyonbenoit.projetRPC.enumeration.EnumRole;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -25,7 +27,7 @@ public class Compte {
         this.courriel = courriel;
         this.motDePasse = motDePasse;
         this.alias = alias;
-        //this.role = new Role()
+        this.role = new Role(-1, EnumRole.ANONYME);
     }
 
     public Compte() {
