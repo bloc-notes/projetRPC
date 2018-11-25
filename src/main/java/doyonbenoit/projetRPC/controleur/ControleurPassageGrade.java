@@ -192,7 +192,7 @@ public class ControleurPassageGrade {
         return valeurRetour;
     }
 
-    @GetMapping(value = "/{courriel}.{booPasseOuCoule}")
+    @GetMapping(value = "/Mobile/{courriel}.{booPasseOuCoule}")
     public Boolean PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
         System.err.println("IL MANQUE DE VÉRIFIER LES 100 PTS ET LES 10 CRÉDITS");
         Compte compteJuger = compteOAD.findByCourriel(courriel);
@@ -216,7 +216,7 @@ public class ControleurPassageGrade {
             return false;
         }
     }
-    @GetMapping(value = "/Ancien.{courriel}")
+    @GetMapping(value = "/Mobile/Ancien.{courriel}")
     public Boolean PasserAAncien(@PathVariable String courriel) {
         System.out.println("Entre");
         Compte compte = compteOAD.findByCourriel(courriel);
