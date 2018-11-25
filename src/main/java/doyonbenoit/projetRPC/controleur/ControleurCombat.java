@@ -37,19 +37,16 @@ public class ControleurCombat {
             combat.setDate(Calendar.getInstance().getTime().getTime());
             switch (role) {
                 case "rouge":
-                    combat.setIntGainPertePointRouge(compteRouge.getGroupe().getGroupe().nbPointSelonCeinture(compteBlanc.getGroupe().getGroupe()));
+                    combat.setIntGainPertePointRouge(10);
                     combat.setIntGainPerteCreditArbite(1);
                     break;
                 case "blanc":
-                    combat.setIntGainPertePointBlanc(compteBlanc.getGroupe().getGroupe().nbPointSelonCeinture(compteRouge.getGroupe().getGroupe()));
+                    combat.setIntGainPertePointBlanc(10);
                     combat.setIntGainPerteCreditArbite(1);
                     break;
                 case "null":
-                    int intNbPointBlanc = Math.round(compteBlanc.getGroupe().getGroupe().nbPointSelonCeinture(compteRouge.getGroupe().getGroupe()) / 2);
-                    int intNbPointRouge = Math.round(compteRouge.getGroupe().getGroupe().nbPointSelonCeinture(compteBlanc.getGroupe().getGroupe()) / 2);
-
-                    combat.setIntGainPertePointBlanc(intNbPointBlanc);
-                    combat.setIntGainPertePointRouge(intNbPointRouge);
+                    combat.setIntGainPertePointBlanc(5);
+                    combat.setIntGainPertePointRouge(5);
                     combat.setIntGainPerteCreditArbite(1);
                     break;
             }
@@ -61,15 +58,12 @@ public class ControleurCombat {
             combat.setDate(Calendar.getInstance().getTime().getTime());
             switch (role) {
                 case "arbitre":
-                    combat.setIntGainPertePointRouge(compteRouge.getGroupe().getGroupe().nbPointSelonCeinture(compteBlanc.getGroupe().getGroupe()));
+                    combat.setIntGainPertePointRouge(10);
                     combat.setIntGainPerteCreditArbite(1);
                     break;
                 case "arbitreFaute":
-                    int intNbPointBlanc = Math.round(compteBlanc.getGroupe().getGroupe().nbPointSelonCeinture(compteRouge.getGroupe().getGroupe()) / 2);
-                    int intNbPointRouge = Math.round(compteRouge.getGroupe().getGroupe().nbPointSelonCeinture(compteBlanc.getGroupe().getGroupe()) / 2);
-
-                    combat.setIntGainPertePointBlanc(intNbPointBlanc);
-                    combat.setIntGainPertePointRouge(intNbPointRouge);
+                    combat.setIntGainPertePointBlanc(5);
+                    combat.setIntGainPertePointRouge(5);
                     combat.setIntGainPerteCreditArbite(-5);
                     break;
 
