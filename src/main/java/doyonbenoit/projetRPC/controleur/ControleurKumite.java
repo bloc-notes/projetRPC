@@ -285,12 +285,15 @@ public class ControleurKumite {
         else {
             SalleCombatAndroid.lstAilleur.remove(courriel);
         }
+        System.out.println(SalleCombatAndroid.lstAilleur.toString());
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
+        simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
+        simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
     @MessageMapping("/positionSpectateur.{courriel}.{action}")
     public void majPositionAndroidSpectateur(@DestinationVariable("courriel") String courriel, @DestinationVariable("action") boolean booAction){
         //Ajoute le courriel dans la liste du serveur
-
+        System.out.print("entré dans Spectateur");
         if (booAction) {
             SalleCombatAndroid.lstSpectateur.add(0, courriel);
             try{SalleCombatAndroid.lstAttente.remove(courriel);}catch (Exception e){};
@@ -300,11 +303,13 @@ public class ControleurKumite {
         else {
             SalleCombatAndroid.lstSpectateur.remove(courriel);
         }
+        System.out.println(SalleCombatAndroid.lstSpectateur.toString());
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
     }
     @MessageMapping("/positionAttente.{courriel}.{action}")
     public void majPositionAndroidAttente(@DestinationVariable("courriel") String courriel, @DestinationVariable("action") boolean booAction){
         //Ajoute le courriel dans la liste du serveur
+        System.out.print("entré dans attente");
         if (booAction) {
             SalleCombatAndroid.lstAttente.add(0, courriel);
             try{SalleCombatAndroid.lstSpectateur.remove(courriel);}catch (Exception e){};
@@ -314,11 +319,13 @@ public class ControleurKumite {
         else {
             SalleCombatAndroid.lstAttente.remove(courriel);
         }
+        System.out.println(SalleCombatAndroid.lstAttente.toString());
         simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
     @MessageMapping("/positionArbitre.{courriel}.{action}")
     public void majPositionAndroidArbitre(@DestinationVariable("courriel") String courriel, @DestinationVariable("action") boolean booAction){
         //Ajoute le courriel dans la liste du serveur
+        System.out.print("entré dans arbitre");
         if (booAction) {
             SalleCombatAndroid.lstArbitre.add(0, courriel);
         }
