@@ -272,57 +272,39 @@ public class ControleurKumite {
         simpMessagingTemplate.convertAndSend("/kumite/" + acDep.getStrCheminRetourMaj(), new ReponseKumite(compte,"RETRAIT"));
     }
 
-    @MessageMapping("/positionAilleur.{courriel}.{action}")
-    public void majPositionAndroidAilleur(@DestinationVariable("courriel") String courriel, @DestinationVariable("action") boolean booAction){
+    @MessageMapping("/positionAilleur.{courriel}")
+    public void majPositionAndroidAilleur(@DestinationVariable("courriel") String courriel){
         //Ajoute le courriel dans la liste du serveur
         System.out.print("entré dans ailleur");
-        if (booAction) {
-            SalleCombatAndroid.lstAilleur.add(0, courriel);
-            try{SalleCombatAndroid.lstAttente.remove(courriel);}catch (Exception e){};
-            try{SalleCombatAndroid.lstSpectateur.remove(courriel);}catch (Exception e){};
-        }
-        //Retire le courriel de la liste du serveur
-        else {
-            SalleCombatAndroid.lstAilleur.remove(courriel);
-        }
+        SalleCombatAndroid.lstAilleur.add(0, courriel);
+        try{SalleCombatAndroid.lstAttente.remove(courriel);}catch (Exception e){};
+        try{SalleCombatAndroid.lstSpectateur.remove(courriel);}catch (Exception e){};
         System.out.println(SalleCombatAndroid.lstAilleur.toString());
         simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
         simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
-    @MessageMapping("/positionSpectateur.{courriel}.{action}")
-    public void majPositionAndroidSpectateur(@DestinationVariable("courriel") String courriel, @DestinationVariable("action") boolean booAction){
+    @MessageMapping("/positionSpectateur.{courriel}")
+    public void majPositionAndroidSpectateur(@DestinationVariable("courriel") String courriel){
         //Ajoute le courriel dans la liste du serveur
         System.out.print("entré dans Spectateur");
-        if (booAction) {
-            SalleCombatAndroid.lstSpectateur.add(0, courriel);
-            try{SalleCombatAndroid.lstAttente.remove(courriel);}catch (Exception e){};
-            try{SalleCombatAndroid.lstAilleur.remove(courriel);}catch (Exception e){};
-        }
-        //Retire le courriel de la liste du serveur
-        else {
-            SalleCombatAndroid.lstSpectateur.remove(courriel);
-        }
+        SalleCombatAndroid.lstSpectateur.add(0, courriel);
+        try{SalleCombatAndroid.lstAttente.remove(courriel);}catch (Exception e){};
+        try{SalleCombatAndroid.lstAilleur.remove(courriel);}catch (Exception e){};
         System.out.println(SalleCombatAndroid.lstSpectateur.toString());
         simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
         simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
-    @MessageMapping("/positionAttente.{courriel}.{action}")
-    public void majPositionAndroidAttente(@DestinationVariable("courriel") String courriel, @DestinationVariable("action") boolean booAction){
+    @MessageMapping("/positionAttente.{courriel}")
+    public void majPositionAndroidAttente(@DestinationVariable("courriel") String courriel){
         //Ajoute le courriel dans la liste du serveur
         System.out.print("entré dans attente");
-        if (booAction) {
-            SalleCombatAndroid.lstAttente.add(0, courriel);
-            try{SalleCombatAndroid.lstSpectateur.remove(courriel);}catch (Exception e){};
-            try{SalleCombatAndroid.lstAilleur.remove(courriel);}catch (Exception e){};
-        }
-        //Retire le courriel de la liste du serveur
-        else {
-            SalleCombatAndroid.lstAttente.remove(courriel);
-        }
+        SalleCombatAndroid.lstAttente.add(0, courriel);
+        try{SalleCombatAndroid.lstSpectateur.remove(courriel);}catch (Exception e){};
+        try{SalleCombatAndroid.lstAilleur.remove(courriel);}catch (Exception e){};
         System.out.println(SalleCombatAndroid.lstAttente.toString());
         simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
@@ -340,6 +322,7 @@ public class ControleurKumite {
         else {
             SalleCombatAndroid.lstArbitre.remove(courriel);
         }
+        System.out.println(SalleCombatAndroid.lstArbitre.toString());
         simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
