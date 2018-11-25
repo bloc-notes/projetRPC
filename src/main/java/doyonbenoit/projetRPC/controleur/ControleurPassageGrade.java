@@ -193,7 +193,7 @@ public class ControleurPassageGrade {
     }
 
     @GetMapping(value = "/Mobile/{courriel}.{booPasseOuCoule}")
-    public Boolean PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
+    public ResponseEntity<Void>  PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
         System.err.println("IL MANQUE DE VÉRIFIER LES 100 PTS ET LES 10 CRÉDITS");
         Compte compteJuger = compteOAD.findByCourriel(courriel);
         Compte compteExaminateur = compteOAD.findByCourriel("v1@dojo");
@@ -211,13 +211,13 @@ public class ControleurPassageGrade {
                 compteJuger.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
                 compteOAD.save(compteJuger);
             }
-            return true;
+            return ResponseEntity.ok().build();
         }else {
-            return false;
+            return ResponseEntity.badRequest().build();
         }
     }
     @GetMapping(value = "/Mobile/Ancien.{courriel}")
-    public Boolean PasserAAncien(@PathVariable String courriel) {
+    public ResponseEntity<Void>  PasserAAncien(@PathVariable String courriel) {
         System.out.println("Entre");
         Compte compte = compteOAD.findByCourriel(courriel);
         if (compte.getRole().getRole().equals(EnumRole.NOUVEAU)){
@@ -228,9 +228,9 @@ public class ControleurPassageGrade {
             compte.setRole(new Role(roleSuivant.ordinal(), roleSuivant));
             System.out.println(compte.getRole().toString());
             compteOAD.save(compte);
-            return true;
+            return ResponseEntity.ok().build();
         }else{
-            return false;
+            return ResponseEntity.badRequest().build();
         }
     }
 }

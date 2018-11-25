@@ -7,6 +7,7 @@ import doyonbenoit.projetRPC.entite.Combat;
 import doyonbenoit.projetRPC.entite.Compte;
 import doyonbenoit.projetRPC.service.CompteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,7 @@ public class ControleurCombat {
     CombatOad combatOad;
 
     @GetMapping(value = "/{courriel}.{role}")
-    public boolean afficheComptePointCredit(@PathVariable String courriel, @PathVariable String role) {
+    public ResponseEntity<Void> afficheComptePointCredit(@PathVariable String courriel, @PathVariable String role) {
         Compte compteRouge;
         Compte compteBlanc;
         Compte compteArbitre;
@@ -76,6 +77,6 @@ public class ControleurCombat {
         }
         combatOad.save(combat);
         System.out.println(combat.toString());
-        return true;
+        return ResponseEntity.ok().build();
     }
 }
