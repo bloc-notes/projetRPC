@@ -286,6 +286,7 @@ public class ControleurKumite {
             SalleCombatAndroid.lstAilleur.remove(courriel);
         }
         System.out.println(SalleCombatAndroid.lstAilleur.toString());
+        simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
         simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
@@ -304,7 +305,10 @@ public class ControleurKumite {
             SalleCombatAndroid.lstSpectateur.remove(courriel);
         }
         System.out.println(SalleCombatAndroid.lstSpectateur.toString());
+        simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
+        simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
+        simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
     @MessageMapping("/positionAttente.{courriel}.{action}")
     public void majPositionAndroidAttente(@DestinationVariable("courriel") String courriel, @DestinationVariable("action") boolean booAction){
@@ -320,6 +324,9 @@ public class ControleurKumite {
             SalleCombatAndroid.lstAttente.remove(courriel);
         }
         System.out.println(SalleCombatAndroid.lstAttente.toString());
+        simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
+        simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
+        simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
         simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
     @MessageMapping("/positionArbitre.{courriel}.{action}")
@@ -334,5 +341,8 @@ public class ControleurKumite {
             SalleCombatAndroid.lstArbitre.remove(courriel);
         }
         simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
+        simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur );
+        simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur );
+        simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
 }
