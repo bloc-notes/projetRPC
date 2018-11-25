@@ -9,7 +9,8 @@ import java.util.List;
 public final class SalleCombat {
     private static List<Compte> lstSpectateur = new ArrayList<>();
     private static List<Compte> lstAttenteCombat = new ArrayList<>();
-
+    private static List<Compte> lstAilleur = new ArrayList<>();
+    private static List<Compte> lstAttenteArbitre = new ArrayList<>();
     private static Compte Rouge;
     private static Compte Blanc;
     private static Compte Arbite;
@@ -52,6 +53,22 @@ public final class SalleCombat {
 
     public List<Compte> getLesAttentesCombat() {
         return lstAttenteCombat;
+    }
+
+    public static List<Compte> getLstAilleur() {
+        return lstAilleur;
+    }
+
+    public static void setLstAilleur(List<Compte> lstAilleur) {
+        SalleCombat.lstAilleur = lstAilleur;
+    }
+
+    public static List<Compte> getLstAttenteArbitre() {
+        return lstAttenteArbitre;
+    }
+
+    public static void setLstAttenteArbitre(List<Compte> lstAttenteArbitre) {
+        SalleCombat.lstAttenteArbitre = lstAttenteArbitre;
     }
 
     public Compte getArbite() {

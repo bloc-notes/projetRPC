@@ -5,6 +5,8 @@ public enum ActionDeplacement {
     ATTENTECOMBAT("majAttenteCombat"),
     COMBATANTROUGE("majCombatantRouge"),
     COMBATANTBLANC("majCombatantBlanc"),
+    LISTEARBITRE("majListeArbitre"),
+    AILLEUR("majAilleur"),
     ARBITE("majArbite"),
     COMBAT("");
 
