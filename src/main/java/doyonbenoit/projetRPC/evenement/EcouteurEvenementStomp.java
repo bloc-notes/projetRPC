@@ -2,6 +2,7 @@ package doyonbenoit.projetRPC.evenement;
 
 import doyonbenoit.projetRPC.controleur.ControleurKumite;
 import doyonbenoit.projetRPC.entite.SalleCombat;
+import doyonbenoit.projetRPC.entite.SalleCombatAndroid;
 import doyonbenoit.projetRPC.enumeration.ActionDeplacement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,14 @@ public class EcouteurEvenementStomp implements ApplicationListener<SessionConnec
                     + sha.getCommand());*/
 
             //System.out.println("Utilisateur: " + strUtilisateurId + " [Entre]");
+            /*if (SalleCombatAndroid.lstArbitre.contains(strUtilisateurId)){SalleCombatAndroid.lstArbitre.remove(strUtilisateurId);}
+            if (SalleCombatAndroid.lstAilleur.contains(strUtilisateurId)){SalleCombatAndroid.lstAilleur.remove(strUtilisateurId);}
+            if (SalleCombatAndroid.lstSpectateur.contains(strUtilisateurId)){SalleCombatAndroid.lstSpectateur.remove(strUtilisateurId);}
+            if (SalleCombatAndroid.lstAttente.contains(strUtilisateurId)){SalleCombatAndroid.lstAttente.remove(strUtilisateurId);}
+            System.out.println(SalleCombatAndroid.lstArbitre.toString());
+            System.out.println(SalleCombatAndroid.lstAilleur.toString());
+            System.out.println(SalleCombatAndroid.lstSpectateur.toString());
+            System.out.println(SalleCombatAndroid.lstAttente.toString());*/
         }
     }
 

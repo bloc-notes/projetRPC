@@ -1,5 +1,6 @@
 package doyonbenoit.projetRPC.configuration;
 
+import doyonbenoit.projetRPC.entite.SalleCombatAndroid;
 import doyonbenoit.projetRPC.securite.Utilisateur;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -104,7 +105,24 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
 
 
                 //System.out.println("En-tete message: " + message.getHeaders());
+                if (StompCommand.DISCONNECT == accessor.getCommand()) {
+                    Authentication authentication = (Authentication) accessor.getUser();
+                    System.out.println("user va disconnect");
+                    if (authentication != null && authentication.getPrincipal() instanceof Utilisateur) {
+                        System.out.println("user SE disconnect");
+                        Authentication authentication2 = (Authentication) accessor.getUser();
+                        Utilisateur utilisateur = (Utilisateur) authentication2.getPrincipal();
+                        if (SalleCombatAndroid.lstArbitre.contains(utilisateur.getUsername())){SalleCombatAndroid.lstArbitre.remove(utilisateur.getUsername());}
+                        if (SalleCombatAndroid.lstAilleur.contains(utilisateur.getUsername())){SalleCombatAndroid.lstAilleur.remove(utilisateur.getUsername());}
+                        if (SalleCombatAndroid.lstSpectateur.contains(utilisateur.getUsername())){SalleCombatAndroid.lstSpectateur.remove(utilisateur.getUsername());}
+                        if (SalleCombatAndroid.lstAttente.contains(utilisateur.getUsername())){SalleCombatAndroid.lstAttente.remove(utilisateur.getUsername());}
+                        System.out.println(SalleCombatAndroid.lstArbitre.toString());
+                        System.out.println(SalleCombatAndroid.lstAilleur.toString());
+                        System.out.println(SalleCombatAndroid.lstSpectateur.toString());
+                        System.out.println(SalleCombatAndroid.lstAttente.toString());
 
+                    }
+                }
                 System.out.println("-------------Fin--------------");
                 return message;
             }
