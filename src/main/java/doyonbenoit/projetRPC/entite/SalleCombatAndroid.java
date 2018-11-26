@@ -30,33 +30,36 @@ public class SalleCombatAndroid {
 
         //Trouver tout ses examens réussit
         List<Examen> lstExamenAnterieurReussit = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte,Boolean.TRUE);
-        lstExamenAnterieurReussit.forEach(System.out::println);
+        //lstExamenAnterieurReussit.forEach(System.out::println);
         int intNbExamenReussit = lstExamenAnterieurReussit.size();
 
         //Solde des examens
         int intSoldeExamen =  -1 * ((intNbExamenEchouer * 5) + (intNbExamenReussit * 10));
 
-        List<Combat> lstCombat;
+        //List<Combat> lstCombat;
+        List<Combat> lstcmBlanc;
+        List<Combat> lstcmRouge;
 
         //à un examen réussit
         if (lstExamenAnterieurReussit.size() >= 1) {
-            System.out.println("POSSEDE UN EXAMEN");
+            System.out.println("POSSEDE UN EXAMEN\n--------------");
             Long dateDebut = lstExamenAnterieurReussit.get(0).getDate();
-            Long dateActuel = Calendar.getInstance().getTime().getTime();
+            //Long dateActuel = Calendar.getInstance().getTime().getTime();
 
-            List<Combat> lstcmBlanc = combatOad.findByDateGreaterThanEqualAndCmBlanc(dateDebut,compte);
-            List<Combat> lstcmRouge = combatOad.findByDateGreaterThanEqualAndCmRouge(dateDebut, compte);
+            lstcmBlanc = combatOad.findByDateGreaterThanEqualAndCmBlanc(dateDebut,compte);
+            lstcmRouge = combatOad.findByDateGreaterThanEqualAndCmRouge(dateDebut, compte);
 
-            lstCombat = Stream.concat(lstcmBlanc.stream(),lstcmRouge.stream()).distinct().collect(Collectors.toList());
+            //lstCombat = Stream.concat(lstcmBlanc.stream(),lstcmRouge.stream()).distinct().collect(Collectors.toList());
         }
         else {
-            lstCombat = combatOad.findByCmBlancOrCmRouge(compte,compte);
+            //lstCombat = combatOad.findByCmBlancOrCmRouge(compte,compte);
+            lstcmBlanc = combatOad.findByCmBlanc(compte);
+            lstcmRouge = combatOad.findByCmRouge(compte);
         }
 
         //converti les points
         //Pour les blanc
-        List<Combat> lstCombatBlancFiltrer = lstCombat.stream()
-                .filter(combat -> combat.getCmBlanc().getCourriel().equalsIgnoreCase(courriel))
+        List<Combat> lstCombatBlancFiltrer = lstcmBlanc.stream()
                 .filter(combat -> combat.getIntGainPertePointBlanc() > 0)
                 .collect(Collectors.toList());
 
@@ -70,9 +73,8 @@ public class SalleCombatAndroid {
         });
 
         //Pour les rouges
-        List<Combat> lstCombatRougeFiltrer = lstCombat.stream()
-                .filter(combat -> combat.getCmRouge().getCourriel().equalsIgnoreCase(courriel))
-                .filter(combat -> combat.getIntGainPertePointBlanc() > 0)
+        List<Combat> lstCombatRougeFiltrer = lstcmRouge.stream()
+                .filter(combat -> combat.getIntGainPertePointRouge() > 0)
                 .collect(Collectors.toList());
 
         lstCombatRougeFiltrer.forEach(combat -> {
@@ -81,7 +83,7 @@ public class SalleCombatAndroid {
 
             int intPoint = rouge.nbPointSelonCeinture(blanc);
 
-            combat.setIntGainPertePointRouge(combat.getIntGainPertePointBlanc() > 5 ? intPoint : Math.round(intPoint / 2));
+            combat.setIntGainPertePointRouge(combat.getIntGainPertePointRouge() > 5 ? intPoint : Math.round(intPoint / 2));
         });
 
 
@@ -100,7 +102,7 @@ public class SalleCombatAndroid {
 
         //Calcule solde arbitrage
         List<Combat> lstArbitage = combatOad.findByCmArbite(compte);
-        int intNbCombatArbitrer = lstCombat.size();
+        int intNbCombatArbitrer = (int) Stream.concat(lstcmBlanc.stream(),lstcmRouge.stream()).distinct().count();
 
         int intSoldeArbitrage = lstArbitage.stream()
                 .mapToInt(com -> com.getIntGainPerteCreditArbite())

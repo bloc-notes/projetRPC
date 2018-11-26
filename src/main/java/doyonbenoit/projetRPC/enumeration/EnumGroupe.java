@@ -18,6 +18,7 @@ public enum EnumGroupe {
         int intNbPointPossible = 0;
 
         switch (intDifference) {
+            case -7:
             case -6:
                 intNbPointPossible = 1;
                 break;
@@ -55,6 +56,7 @@ public enum EnumGroupe {
                 intNbPointPossible = 30;
                 break;
             case 6:
+            case 7:
                 intNbPointPossible = 50;
                 break;
         }
