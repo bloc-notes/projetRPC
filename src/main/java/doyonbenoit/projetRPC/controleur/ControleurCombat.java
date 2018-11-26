@@ -2,10 +2,8 @@ package doyonbenoit.projetRPC.controleur;
 
 import doyonbenoit.projetRPC.OAD.CombatOad;
 import doyonbenoit.projetRPC.OAD.CompteOad;
-import doyonbenoit.projetRPC.OAD.ExamenOad;
 import doyonbenoit.projetRPC.entite.Combat;
 import doyonbenoit.projetRPC.entite.Compte;
-import doyonbenoit.projetRPC.service.CompteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Calendar;
+
 @RestController
 @RequestMapping("/Combat")
 public class ControleurCombat {
@@ -28,7 +27,7 @@ public class ControleurCombat {
         Compte compteRouge;
         Compte compteBlanc;
         Compte compteArbitre;
-        Combat combat = new Combat();
+        Combat combat;
         if (!role.contains("arbitre")){
             compteRouge = compteOad.findByCourriel(courriel);
             compteBlanc = compteOad.findByCourriel("s1@dojo");

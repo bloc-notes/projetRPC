@@ -2,7 +2,6 @@ package doyonbenoit.projetRPC.controleur;
 
 import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.OAD.ExamenOad;
-//import doyon.projetRPCA.entite.*;
 import doyonbenoit.projetRPC.entite.Role;
 import doyonbenoit.projetRPC.securite.Utilisateur;
 import doyonbenoit.projetRPC.entite.Compte;
@@ -76,12 +75,8 @@ public class ControleurMVC {
         List<Compte> lstHonteAncient =  lstAncient.stream().filter(combatant -> !examenOad.findFirstByCmJugerOrderByDateDesc(combatant).getBooReussit()).collect(Collectors.toList());
         List<Compte> lstHonteNouveau =  lstNouveau.stream().filter(combatant -> {
             Optional<Examen> opExam = Optional.ofNullable(examenOad.findFirstByCmJugerOrderByDateDesc(combatant));
-            if (opExam.isPresent()) {
-                return !opExam.get().getBooReussit();
-            }
-            else {
-                return false;
-            }
+
+            return opExam.isPresent() && !opExam.get().getBooReussit();
         }).collect(Collectors.toList());
 
         lstNouveau.removeAll(lstHonteNouveau);

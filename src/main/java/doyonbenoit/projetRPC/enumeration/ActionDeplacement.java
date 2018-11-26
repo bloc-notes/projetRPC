@@ -8,7 +8,8 @@ public enum ActionDeplacement {
     LISTEARBITRE("majListeArbitre"),
     AILLEUR("majAilleur"),
     ARBITE("majArbite"),
-    COMBAT("");
+    COMBAT(""),
+    AILLEURS("");
 
     private final String strCheminRetourMaj;
 

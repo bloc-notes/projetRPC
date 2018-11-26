@@ -4,17 +4,15 @@ import doyonbenoit.projetRPC.OAD.CombatOad;
 import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.OAD.ExamenOad;
 import doyonbenoit.projetRPC.OTD.ExamenOtd;
-//import doyon.projetRPCA.entite.*;
 import doyonbenoit.projetRPC.entite.*;
 import doyonbenoit.projetRPC.enumeration.EnumGroupe;
+import doyonbenoit.projetRPC.enumeration.EnumInfoCompte;
 import doyonbenoit.projetRPC.enumeration.EnumRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/PassageGrade")
@@ -38,56 +36,14 @@ public class ControleurPassageGrade {
         List<ReponseExamen> lstCmValidePourPromotion = new ArrayList<>();
 
         lstcmPossibleExam.forEach(compte -> {
-            //Trouve tout ses examens échouer
-            List<Examen> lstExamenAnterieurEchouer = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte, Boolean.FALSE);
-            int intNbExamenEchouer = lstExamenAnterieurEchouer.size();
+            SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
 
-            //Trouver tout ses examens réussit
-            List<Examen> lstExamenAnterieurReussit = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte,Boolean.TRUE);
-            int intNbExamenReussit = lstExamenAnterieurReussit.size();
+            HashMap<String, Object> infoCompteComplet = salleCombatAndroid.calculePoint(compte.getCourriel(), combatOad,compteOAD,examenOad);
 
-            //Solde des examens
-            int intSoldeExamen =  -1 * ((intNbExamenEchouer * 5) + (intNbExamenReussit * 10));
+            int intSoldeTotal = (int) infoCompteComplet.get(EnumInfoCompte.CREDIT.getNom());
+            int intNbPointCombat = (int) infoCompteComplet.get(EnumInfoCompte.POINT.getNom());
+            int intNbCombatArbitrer = (int) infoCompteComplet.get(EnumInfoCompte.ARBITE.getNom());
 
-            List<Combat> lstCombat;
-
-            //à un examen réussit
-            if (lstExamenAnterieurReussit.size() >= 1) {
-                Long dateDebut = lstExamenAnterieurReussit.get(0).getDate();
-                Long dateActuel = Calendar.getInstance().getTime().getTime();
-                //lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqual(dateActuel,dateDebut);
-                lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqualAndAndCmBlancOrCmRouge(dateActuel,dateDebut,compte,compte);
-            }
-            else {
-                lstCombat = combatOad.findByCmBlancOrAndCmRouge(compte,compte);
-            }
-
-            //Calcule le nombre de points
-            Map<Compte,Integer> mapBlanc = lstCombat.stream()
-                    .collect(Collectors.groupingBy(Combat::getCmBlanc, Collectors.summingInt(Combat::getIntGainPertePointBlanc)));
-
-            Map<Compte, Integer> mapRouge = lstCombat.stream()
-                    .collect(Collectors.groupingBy(Combat::getCmRouge, Collectors.summingInt(Combat::getIntGainPertePointRouge)));
-
-            //Total
-            Map<Compte, Integer> mapTotal =  Stream.concat(mapBlanc.entrySet().stream(), mapRouge.entrySet().stream())
-                    .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
-
-            int intNbPointCombat = mapTotal.entrySet().stream().mapToInt(value -> value.getValue()).sum();
-
-            //Calcule solde arbitrage
-            List<Combat> lstArbitage = combatOad.findByCmArbite(compte);
-            int intNbCombatArbitrer = lstCombat.size();
-
-            int intSoldeArbitrage = lstArbitage.stream()
-                    .mapToInt(com -> com.getIntGainPerteCreditArbite())
-                    .sum();
-
-            //Remplit les conditions de 100 points et 10 credits pour passer son examen de ceinture ...
-            //Ajouter -10 si ancient ....
-            int intSoldeTotal = 0;
-            intSoldeTotal -= compte.getRole().getRole().ordinal() >= EnumRole.ANCIEN.ordinal() ? 10 : 0;
-            intSoldeTotal += intSoldeArbitrage + intSoldeExamen;
             if (!compte.getGroupe().getGroupe().equals(EnumGroupe.NOIRE) && (intSoldeTotal >= 10) && (intNbPointCombat >= 100 )) {
                 //Est dans la honte?
                 Examen dernierExamen = examenOad.findFirstByCmJugerOrderByDateDesc(compte);
@@ -194,67 +150,14 @@ public class ControleurPassageGrade {
 
     @GetMapping(value = "/Mobile/{courriel}.{booPasseOuCoule}")
     public ResponseEntity<Void>  PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
-        Compte compte = compteOAD.findByCourriel(courriel);
-        //Trouve tout ses examens échouer
-        List<Examen> lstExamenAnterieurEchouer = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte, Boolean.FALSE);
-        int intNbExamenEchouer = lstExamenAnterieurEchouer.size();
 
-        //Trouver tout ses examens réussit
-        List<Examen> lstExamenAnterieurReussit = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte,Boolean.TRUE);
-        lstExamenAnterieurReussit.forEach(System.out::println);
-        int intNbExamenReussit = lstExamenAnterieurReussit.size();
+        SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
+        HashMap<String, Object> infoCompteComplet = salleCombatAndroid.calculePoint(courriel, combatOad,compteOAD,examenOad);
 
-        //Solde des examens
-        int intSoldeExamen =  -1 * ((intNbExamenEchouer * 5) + (intNbExamenReussit * 10));
+        Compte compte = (Compte) infoCompteComplet.get(EnumInfoCompte.COMPTE.getNom());
+        int intNbPointCombat = (int) infoCompteComplet.get(EnumInfoCompte.POINT.getNom());
+        int intSoldeTotal = (int) infoCompteComplet.get(EnumInfoCompte.CREDIT.getNom());
 
-        List<Combat> lstCombat;
-
-        //à un examen réussit
-        if (lstExamenAnterieurReussit.size() >= 1) {
-            System.out.println("POSSEDE UN EXAMEN");
-            Long dateDebut = lstExamenAnterieurReussit.get(0).getDate();
-            Long dateActuel = Calendar.getInstance().getTime().getTime();
-
-            //lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqual(dateActuel,dateDebut);
-            List<Combat> lstcmBlanc = combatOad.findByDateGreaterThanEqualAndCmBlanc(dateDebut,compte);
-            List<Combat> lstcmRouge = combatOad.findByDateGreaterThanEqualAndCmRouge(dateDebut, compte);
-
-            //lstCombat = combatOad.findByDateGreaterThanAndCmBlancOrCmRouge(dateDebut,compte,compte);
-            lstCombat = Stream.concat(lstcmBlanc.stream(),lstcmRouge.stream()).distinct().collect(Collectors.toList());
-
-        }
-        else {
-            lstCombat = combatOad.findByCmBlancOrCmRouge(compte,compte);
-        }
-
-        //Calcule le nombre de points
-        Map<Compte,Integer> mapBlanc = lstCombat.stream()
-                .filter(combat -> combat.getCmBlanc().getCourriel().equalsIgnoreCase(courriel))
-                .collect(Collectors.groupingBy(Combat::getCmBlanc, Collectors.summingInt(Combat::getIntGainPertePointBlanc)));
-
-        Map<Compte, Integer> mapRouge = lstCombat.stream()
-                .filter(combat -> combat.getCmRouge().getCourriel().equalsIgnoreCase(courriel))
-                .collect(Collectors.groupingBy(Combat::getCmRouge, Collectors.summingInt(Combat::getIntGainPertePointRouge)));
-
-        //Total
-        Map<Compte, Integer> mapTotal =  Stream.concat(mapBlanc.entrySet().stream(), mapRouge.entrySet().stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
-
-        int intNbPointCombat = mapTotal.entrySet().stream().mapToInt(value -> value.getValue()).sum();
-
-        //Calcule solde arbitrage
-        List<Combat> lstArbitage = combatOad.findByCmArbite(compte);
-        int intNbCombatArbitrer = lstCombat.size();
-
-        int intSoldeArbitrage = lstArbitage.stream()
-                .mapToInt(com -> com.getIntGainPerteCreditArbite())
-                .sum();
-
-        //Remplit les conditions de 100 points et 10 credits pour passer son examen de ceinture ...
-        //Ajouter -10 si ancient ....
-        int intSoldeTotal = 0;
-        intSoldeTotal -= compte.getRole().getRole().ordinal() >= EnumRole.ANCIEN.ordinal() ? 10 : 0;
-        intSoldeTotal += intSoldeArbitrage + intSoldeExamen;
         Compte compteExaminateur = compteOAD.findByCourriel("v1@dojo");
         if ((compte.getGroupe().getId()<7)&&(intNbPointCombat>=100)&&(intSoldeTotal>=10)) {
             Examen examen = new Examen();
@@ -277,65 +180,13 @@ public class ControleurPassageGrade {
     }
     @GetMapping(value = "/Mobile/Ancien.{courriel}")
     public ResponseEntity<Void>  PasserAAncien(@PathVariable String courriel) {
-        Compte compte = compteOAD.findByCourriel(courriel);
-        //Trouve tout ses examens échouer
-        List<Examen> lstExamenAnterieurEchouer = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte, Boolean.FALSE);
-        int intNbExamenEchouer = lstExamenAnterieurEchouer.size();
+        SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
+        HashMap<String, Object> infoCompteComplet = salleCombatAndroid.calculePoint(courriel, combatOad,compteOAD,examenOad);
 
-        //Trouver tout ses examens réussit
-        List<Examen> lstExamenAnterieurReussit = examenOad.findByCmJugerAndBooReussitOrderByDateDesc(compte,Boolean.TRUE);
-        lstExamenAnterieurReussit.forEach(System.out::println);
-        int intNbExamenReussit = lstExamenAnterieurReussit.size();
+        Compte compte = (Compte) infoCompteComplet.get(EnumInfoCompte.COMPTE.getNom());
+        int intSoldeTotal = (int) infoCompteComplet.get(EnumInfoCompte.CREDIT.getNom());
+        int intNbCombatArbitrer = (int) infoCompteComplet.get(EnumInfoCompte.ARBITE.getNom());
 
-        //Solde des examens
-        int intSoldeExamen =  -1 * ((intNbExamenEchouer * 5) + (intNbExamenReussit * 10));
-
-        List<Combat> lstCombat;
-
-        //à un examen réussit
-        if (lstExamenAnterieurReussit.size() >= 1) {
-            System.out.println("POSSEDE UN EXAMEN");
-            Long dateDebut = lstExamenAnterieurReussit.get(0).getDate();
-            Long dateActuel = Calendar.getInstance().getTime().getTime();
-
-            //lstCombat = combatOad.findByDateLessThanEqualAndDateGreaterThanEqual(dateActuel,dateDebut);
-            List<Combat> lstcmBlanc = combatOad.findByDateGreaterThanEqualAndCmBlanc(dateDebut,compte);
-            List<Combat> lstcmRouge = combatOad.findByDateGreaterThanEqualAndCmRouge(dateDebut, compte);
-
-            //lstCombat = combatOad.findByDateGreaterThanAndCmBlancOrCmRouge(dateDebut,compte,compte);
-            lstCombat = Stream.concat(lstcmBlanc.stream(),lstcmRouge.stream()).distinct().collect(Collectors.toList());
-
-        }
-        else {
-            lstCombat = combatOad.findByCmBlancOrCmRouge(compte,compte);
-        }
-
-        //Calcule le nombre de points
-        Map<Compte,Integer> mapBlanc = lstCombat.stream()
-                .filter(combat -> combat.getCmBlanc().getCourriel().equalsIgnoreCase(courriel))
-                .collect(Collectors.groupingBy(Combat::getCmBlanc, Collectors.summingInt(Combat::getIntGainPertePointBlanc)));
-
-        Map<Compte, Integer> mapRouge = lstCombat.stream()
-                .filter(combat -> combat.getCmRouge().getCourriel().equalsIgnoreCase(courriel))
-                .collect(Collectors.groupingBy(Combat::getCmRouge, Collectors.summingInt(Combat::getIntGainPertePointRouge)));
-
-        //Total
-        Map<Compte, Integer> mapTotal =  Stream.concat(mapBlanc.entrySet().stream(), mapRouge.entrySet().stream())
-                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
-
-        //Calcule solde arbitrage
-        List<Combat> lstArbitage = combatOad.findByCmArbite(compte);
-        int intNbCombatArbitrer = lstCombat.size();
-
-        int intSoldeArbitrage = lstArbitage.stream()
-                .mapToInt(com -> com.getIntGainPerteCreditArbite())
-                .sum();
-
-        //Remplit les conditions de 100 points et 10 credits pour passer son examen de ceinture ...
-        //Ajouter -10 si ancient ....
-        int intSoldeTotal = 0;
-        intSoldeTotal -= compte.getRole().getRole().ordinal() >= EnumRole.ANCIEN.ordinal() ? 10 : 0;
-        intSoldeTotal += intSoldeArbitrage + intSoldeExamen;
         if (compte.getRole().getRole().equals(EnumRole.NOUVEAU)&&(intNbCombatArbitrer>=30)&&(intSoldeTotal>=10)){
             int intRole = compte.getRole().getId();
             System.out.println(intRole);

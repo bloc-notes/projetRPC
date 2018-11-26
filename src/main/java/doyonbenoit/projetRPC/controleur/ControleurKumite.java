@@ -2,7 +2,6 @@ package doyonbenoit.projetRPC.controleur;
 
 import doyonbenoit.projetRPC.OAD.CombatOad;
 import doyonbenoit.projetRPC.OAD.CompteOad;
-//import doyon.projetRPCA.entite.*;
 import doyonbenoit.projetRPC.entite.*;
 import doyonbenoit.projetRPC.enumeration.ActionDeplacement;
 import doyonbenoit.projetRPC.enumeration.Attaque;
@@ -254,13 +253,15 @@ public class ControleurKumite {
         Object objPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Compte compte = null;
+        Compte compteMAJ = null;
 
         if (objPrincipal instanceof Utilisateur) {
             compte = ((Utilisateur) objPrincipal).getCompte();
+            compteMAJ = compteOad.findByCourriel(compte.getCourriel());
         }
-
-        Compte compteMAJ = compteOad.findByCourriel(compte.getCourriel());
-
+        else {
+            compteMAJ = new Compte();
+        }
 
         model.put("profile", compteMAJ);
         return "publique/kumite";
