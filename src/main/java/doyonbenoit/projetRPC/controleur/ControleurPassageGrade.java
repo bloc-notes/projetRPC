@@ -157,7 +157,6 @@ public class ControleurPassageGrade {
         Compte compte = (Compte) infoCompteComplet.get(EnumInfoCompte.COMPTE.getNom());
         int intNbPointCombat = (int) infoCompteComplet.get(EnumInfoCompte.POINT.getNom());
         int intSoldeTotal = (int) infoCompteComplet.get(EnumInfoCompte.CREDIT.getNom());
-
         Compte compteExaminateur = compteOAD.findByCourriel("v1@dojo");
         if ((compte.getGroupe().getId()<7)&&(intNbPointCombat>=100)&&(intSoldeTotal>=10)) {
             Examen examen = new Examen();
