@@ -80,12 +80,15 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
 
                 if (StompCommand.SEND == accessor.getCommand()) {
                     Authentication authentication = (Authentication) accessor.getUser();
+                    System.out.println("?");
                     if (authentication != null && authentication.getPrincipal() instanceof Utilisateur) {
+                        System.out.println("??");
                         Authentication authentication2 = (Authentication) accessor.getUser();
                         Utilisateur utilisateur = (Utilisateur) authentication2.getPrincipal();
                         Compte compte = utilisateur.getCompte();
-
-                        if (accessor.getDestination().equalsIgnoreCase("/sujet/reponsePublique") && compte.getRole().getRole().ordinal() > EnumRole.NOUVEAU.ordinal()) {
+                        System.out.println(compte.getRole().getRole().ordinal() + "_" + EnumRole.NOUVEAU.ordinal());
+                        if (accessor.getDestination().equalsIgnoreCase("/app/messagePub") && (compte.getRole().getRole().ordinal() > EnumRole.NOUVEAU.ordinal())) {
+                            System.out.println("ok?");
                             Message<doyonbenoit.projetRPC.entite.Message> stringMessage = MessageBuilder.createMessage(new doyonbenoit.projetRPC.entite.Message("-", "", "Pas autorisation", "Publique"), message.getHeaders());
                             message = stringMessage;
                         }
@@ -93,7 +96,7 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
 
                     } else {
                         //peut pas envoyer de message car pas connecter
-                        if (accessor.getDestination().equalsIgnoreCase("/sujet/reponsePublique")) {
+                        if (accessor.getDestination().equalsIgnoreCase("/app/messagePub")) {
                             Message<doyonbenoit.projetRPC.entite.Message> stringMessage = MessageBuilder.createMessage(new doyonbenoit.projetRPC.entite.Message("-", "", "Pas autorisation", "Publique"), message.getHeaders());
                             message = stringMessage;
                         }
