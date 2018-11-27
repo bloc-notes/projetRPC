@@ -87,7 +87,7 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
                         Utilisateur utilisateur = (Utilisateur) authentication2.getPrincipal();
                         Compte compte = utilisateur.getCompte();
                         System.out.println(compte.getRole().getRole().ordinal() + "_" + EnumRole.NOUVEAU.ordinal());
-                        if (accessor.getDestination().equalsIgnoreCase("/app/messagePub") && (compte.getRole().getRole().ordinal() > EnumRole.NOUVEAU.ordinal())) {
+                        if (accessor.getDestination().equalsIgnoreCase("/app/messagePub") && (compte.getRole().getRole().ordinal() == EnumRole.NOUVEAU.ordinal())) {
                             System.out.println("ok?");
                             Message<doyonbenoit.projetRPC.entite.Message> stringMessage = MessageBuilder.createMessage(new doyonbenoit.projetRPC.entite.Message("-", "", "Pas autorisation", "Publique"), message.getHeaders());
                             message = stringMessage;
