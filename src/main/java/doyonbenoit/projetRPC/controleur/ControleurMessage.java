@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -27,18 +28,26 @@ public class ControleurMessage {
 
     @MessageMapping("/messagePub")
     @SendTo("/sujet/reponsePublique")
-    public Reponse messagePub(Message message) throws Exception {
-        Compte compte = compteOad.findByCourriel(message.getDe());
+    public HashMap<String, Object> messagePub(Message message) throws Exception {
+        //Compte compte = compteOad.findByCourriel(message.getDe());
+        HashMap<String, Object> mapReponse = new HashMap<>();
+        mapReponse.put("id", message.getDe());
+        mapReponse.put("date", dateCreation());
+        mapReponse.put("contenu", message.getContenu());
 
-        return new Reponse(HtmlUtils.htmlEscape(message.getContenu()),message.getPrivilege(),compte.getAvatar().getImgAvatar(), dateCreation());
+        return mapReponse;
     }
 
     @MessageMapping("/messagePri")
     @SendTo("/sujet/reponsePrive")
-    public Reponse messagePri(Message message) throws Exception {
-        Compte compte = compteOad.findByCourriel(message.getDe());
+    public HashMap<String, Object> messagePri(Message message) throws Exception {
+        //Compte compte = compteOad.findByCourriel(message.getDe());
+        HashMap<String, Object> mapReponse = new HashMap<>();
+        mapReponse.put("id", message.getDe());
+        mapReponse.put("date", dateCreation());
+        mapReponse.put("contenu", message.getContenu());
 
-        return new Reponse(HtmlUtils.htmlEscape(message.getContenu()),message.getPrivilege(),compte.getAvatar().getImgAvatar(), dateCreation());
+        return mapReponse;
     }
 
 
