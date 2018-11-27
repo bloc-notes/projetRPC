@@ -102,7 +102,7 @@ public class SalleCombatAndroid {
 
         //Calcule solde arbitrage
         List<Combat> lstArbitage = combatOad.findByCmArbite(compte);
-        int intNbCombatArbitrer = (int) Stream.concat(lstcmBlanc.stream(),lstcmRouge.stream()).distinct().count();
+        int intNbCombatArbitrer = (int) lstArbitage.stream().distinct().count();
 
         int intSoldeArbitrage = lstArbitage.stream()
                 .mapToInt(com -> com.getIntGainPerteCreditArbite())

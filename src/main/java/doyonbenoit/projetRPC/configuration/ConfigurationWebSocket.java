@@ -1,22 +1,24 @@
 package doyonbenoit.projetRPC.configuration;
 
+import doyonbenoit.projetRPC.entite.Compte;
 import doyonbenoit.projetRPC.entite.SalleCombatAndroid;
+import doyonbenoit.projetRPC.enumeration.EnumRole;
 import doyonbenoit.projetRPC.securite.Utilisateur;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.http.server.ServletServerHttpAsyncRequestControl;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -38,7 +40,7 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/webSocket").setAllowedOrigins("http://localhost:8087").withSockJS().setInterceptors(new HandshakeInterceptor() {
+        registry.addEndpoint("/webSocket").setAllowedOrigins("*").withSockJS().setInterceptors(new HandshakeInterceptor() {
             @Override
             public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
                 System.out.println("----------------Avant-------------");
@@ -71,40 +73,39 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 System.out.println("-------------Canal--------------");
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message,StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                /*
-                if (StompCommand.SUBSCRIBE == accessor.getCommand() && (accessor.getDestination().equals("/sujet/reponsePrive"))) {
-                    System.out.println("[Inscription Privée]---");
+                System.out.println("En-tete message: " + message.getHeaders());
 
+
+                if (StompCommand.SEND == accessor.getCommand()) {
                     Authentication authentication = (Authentication) accessor.getUser();
-                    Utilisateur utilisateur = (Utilisateur) authentication.getPrincipal();
-                    System.out.println(utilisateur.getUsername());
-                }*/
-
-                if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
-                    System.out.println("[Inscription]-------");
-
-                    Authentication authentication = (Authentication) accessor.getUser();
-
-                    //System.out.println(authentication);
-
                     if (authentication != null && authentication.getPrincipal() instanceof Utilisateur) {
-                        //System.out.println("AUTHENTIFIER");
-
                         Authentication authentication2 = (Authentication) accessor.getUser();
                         Utilisateur utilisateur = (Utilisateur) authentication2.getPrincipal();
-                        Boolean booType = accessor.getDestination().equals("/sujet/reponsePrive");
-                        System.out.println(utilisateur.getUsername() +  " s'est abonné aux messages " + (booType ? "privés": "publics") );
+                        Compte compte = utilisateur.getCompte();
 
-                    }
-                    else  {
-                        System.out.println("PAS AUTHENTIFIER");
+                        if (accessor.getDestination().equalsIgnoreCase("/sujet/reponsePublique") && compte.getRole().getRole().ordinal() > EnumRole.NOUVEAU.ordinal()) {
+                            Message<doyonbenoit.projetRPC.entite.Message> stringMessage = MessageBuilder.createMessage(new doyonbenoit.projetRPC.entite.Message("v1@dojo", "", "Pas autorisation", "Publique"), message.getHeaders());
+                            message = stringMessage;
+                        }
+
+
+                    } else {
+                        //peut pas envoyer de message car pas connecter
+                        if (accessor.getDestination().equalsIgnoreCase("/sujet/reponsePublique")) {
+                            Message<doyonbenoit.projetRPC.entite.Message> stringMessage = MessageBuilder.createMessage(new doyonbenoit.projetRPC.entite.Message("v1@dojo", "", "Pas autorisation", "Publique"), message.getHeaders());
+                            message = stringMessage;
+                        }
+                        else {
+                            Message<doyonbenoit.projetRPC.entite.Message> stringMessage = MessageBuilder.createMessage(new doyonbenoit.projetRPC.entite.Message("v1@dojo", "", "Pas autorisation", "Prive"), message.getHeaders());
+                            message = stringMessage;
+                        }
+
+
                     }
                 }
 
-
-                //System.out.println("En-tete message: " + message.getHeaders());
                 if (StompCommand.DISCONNECT == accessor.getCommand()) {
                     Authentication authentication = (Authentication) accessor.getUser();
                     System.out.println("user va disconnect");
@@ -112,10 +113,18 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
                         System.out.println("user SE disconnect");
                         Authentication authentication2 = (Authentication) accessor.getUser();
                         Utilisateur utilisateur = (Utilisateur) authentication2.getPrincipal();
-                        if (SalleCombatAndroid.lstArbitre.contains(utilisateur.getUsername())){SalleCombatAndroid.lstArbitre.remove(utilisateur.getUsername());}
-                        if (SalleCombatAndroid.lstAilleur.contains(utilisateur.getUsername())){SalleCombatAndroid.lstAilleur.remove(utilisateur.getUsername());}
-                        if (SalleCombatAndroid.lstSpectateur.contains(utilisateur.getUsername())){SalleCombatAndroid.lstSpectateur.remove(utilisateur.getUsername());}
-                        if (SalleCombatAndroid.lstAttente.contains(utilisateur.getUsername())){SalleCombatAndroid.lstAttente.remove(utilisateur.getUsername());}
+                        if (SalleCombatAndroid.lstArbitre.contains(utilisateur.getUsername())) {
+                            SalleCombatAndroid.lstArbitre.remove(utilisateur.getUsername());
+                        }
+                        if (SalleCombatAndroid.lstAilleur.contains(utilisateur.getUsername())) {
+                            SalleCombatAndroid.lstAilleur.remove(utilisateur.getUsername());
+                        }
+                        if (SalleCombatAndroid.lstSpectateur.contains(utilisateur.getUsername())) {
+                            SalleCombatAndroid.lstSpectateur.remove(utilisateur.getUsername());
+                        }
+                        if (SalleCombatAndroid.lstAttente.contains(utilisateur.getUsername())) {
+                            SalleCombatAndroid.lstAttente.remove(utilisateur.getUsername());
+                        }
                         System.out.println(SalleCombatAndroid.lstArbitre.toString());
                         System.out.println(SalleCombatAndroid.lstAilleur.toString());
                         System.out.println(SalleCombatAndroid.lstSpectateur.toString());
@@ -123,17 +132,8 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
 
                     }
                 }
-                System.out.println("-------------Fin--------------");
-                return message;
-            }
-        });
-    }
 
-    @Override
-    public void configureClientOutboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+                System.out.println("-------------Fin--------------");
                 return message;
             }
         });
