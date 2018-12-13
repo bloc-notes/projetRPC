@@ -117,7 +117,6 @@
                             <v-select v-model="selection" :options="arrAvatars" label="nom" class="selectpicker" @input="majNomAvatar" id="ddlAvatar" name="ddlAvatar">
                                 <template slot="option" slot-scope="option">
                                     <img :src="option.imgAvatar">
-                                    <!--<iframe src="https://giphy.com/embed/bEPXFiqJTQuASO9sVv" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>-->
                                     {{option.nom}}
                                 </template>
                             </v-select>

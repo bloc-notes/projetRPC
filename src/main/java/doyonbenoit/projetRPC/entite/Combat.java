@@ -142,4 +142,6 @@ public class Combat {
                 ", ceintureRouge=" + ceintureRouge +
                 '}';
     }
+
+
 }

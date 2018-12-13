@@ -44,4 +44,5 @@ dependencies {
 	compile("org.webjars:sockjs-client:1.0.2")
 	compile("org.webjars:stomp-websocket:2.3.3")
 	compile("net.sf.uadetector:uadetector-resources:2014.10")
+	compile("org.apache.commons:commons-lang3:3.0")
 }

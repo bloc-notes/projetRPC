@@ -3,6 +3,7 @@ package doyonbenoit.projetRPC.entite;
 import doyonbenoit.projetRPC.OAD.CombatOad;
 import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.OAD.ExamenOad;
+import doyonbenoit.projetRPC.enumeration.CouleurCombatant;
 import doyonbenoit.projetRPC.enumeration.EnumGroupe;
 import doyonbenoit.projetRPC.enumeration.EnumRole;
 
@@ -122,5 +123,29 @@ public class SalleCombatAndroid {
         compteComplet.put("NbCombatArbiter", intNbCombatArbitrer);
 
         return compteComplet;
+    }
+
+    public HashMap<CouleurCombatant,Integer> calculePointPourCombat(Combat combat) {
+        HashMap<CouleurCombatant,Integer> mapRetour = new HashMap<>();
+
+        EnumGroupe blanc = combat.getCmBlanc().getGroupe().getGroupe();
+        EnumGroupe rouge = combat.getCmRouge().getGroupe().getGroupe();
+
+        int intNbPointBlanc = combat.getIntGainPertePointBlanc() > 5
+                ? blanc.nbPointSelonCeinture(rouge)
+                : (combat.getIntGainPertePointBlanc() > 0
+                    ? Math.round(blanc.nbPointSelonCeinture(rouge))
+                    : 0);
+
+        int intNbPointRouge = combat.getIntGainPertePointRouge() > 5
+                ? rouge.nbPointSelonCeinture(blanc)
+                : (combat.getIntGainPertePointRouge() > 0
+                    ? Math.round(rouge.nbPointSelonCeinture(blanc))
+                    : 0);
+
+        mapRetour.put(CouleurCombatant.BLANC, intNbPointBlanc);
+        mapRetour.put(CouleurCombatant.ROUGE, intNbPointRouge);
+
+        return mapRetour;
     }
 }
