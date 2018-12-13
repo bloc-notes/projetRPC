@@ -3,19 +3,14 @@ package doyonbenoit.projetRPC.controleur;
 import doyonbenoit.projetRPC.OAD.CombatOad;
 import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.OAD.ExamenOad;
-import doyonbenoit.projetRPC.OTD.CompteOtd;
 import doyonbenoit.projetRPC.entite.*;
 import doyonbenoit.projetRPC.enumeration.EnumGroupe;
 import doyonbenoit.projetRPC.enumeration.EnumInfoCompte;
-import doyonbenoit.projetRPC.enumeration.EnumRole;
-import doyonbenoit.projetRPC.service.CompteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/Compte")
@@ -25,24 +20,10 @@ public class ControleurCompte {
     CompteOad compteOad;
 
     @Autowired
-    CompteService compteService;
-
-    @Autowired
     ExamenOad examenOad;
 
     @Autowired
     CombatOad combatOad;
-
-    @PostMapping(value = "/inscription")
-    public ResponseEntity<Void> ajoutCompte(@RequestBody CompteOtd compteOtd) {
-        ResponseEntity<Void> valeurRetour = null;
-
-        Compte compte = compteService.nouveauCompte(compteOtd);
-
-        valeurRetour = (!compte.equals(null)) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build() ;
-
-        return valeurRetour;
-    }
 
     @GetMapping(value = "/{courriel}")
     public Compte afficheCompte(@PathVariable String courriel){

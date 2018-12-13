@@ -31,11 +31,6 @@ public class ControleurMVC {
         return "identification";
     }
 
-    @GetMapping(value = "/inscription")
-    public String inscription(Map<String, Object> model) {
-        return "publique/creationCompte";
-    }
-
     @GetMapping(value="/")
     public String dojo(Map<String, Object> model){
         Object objPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
