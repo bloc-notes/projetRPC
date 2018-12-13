@@ -85,13 +85,9 @@
         const typeEnvoieConnection = "CONNECTION";
         const typeEnvoieSpectateur = "SPECTATEUR";
         const typeEnvoieAttenteCombat = "ATTENTECOMBAT";
-        const typeEnvoieArbite = "ARBITE";
-        const typeEnvoieActionCombatant = "ACTIONCOMBATANT";
-        const typeEnvoieCommenceCombat = "COMBATDEBUT";
         const typeEnvoieArbiteQuitter = "ARBITEQUITTER";
         const typeEnvoieBlancQuitter = "BLANCQUITTER";
         const typeEnvoieRougeQuitter = "ROUGEQUITTER";
-        const typeEnvoieFinCombat = "FINCOMBAT";
         const typeEnvoieExpulserCombatant = "VIDERCOMBATANT";
     </script>
 </head>
@@ -110,9 +106,6 @@
                     <div id="profile" class="media bg-light border">
                         <div class="mr-2">
                             <input id="cbTypeActeur" type="checkbox" data-toggle="toggle" data-on="Compétiteur" data-off="Spectateur" onchange="salle.Emplacement=$(this).prop('checked'); salle.majPosition();"><br/><br/>
-                            <div id="divArbite" data-toggle="tooltip">
-                                <input id="cbArbite" type="checkbox" data-toggle="toggle" data-on="Arbite" data-off="Pas arbite" onchange="salle.envoie(typeEnvoieArbite);">
-                            </div>
                         </div>
                         <img th:src="${profile.getAvatar().getImgAvatar()}" class="media-object">
                         <div class="media-body">
@@ -120,41 +113,6 @@
                             Ceinture: <span th:text="${profile.getGroupe().getGroupe()}"></span>
                             <span></span>
                         </div>
-                    </div>
-                </div>
-                <div v-show="Arbite != null && Arbite.courriel == CompteProfile.courriel" class="col-5">
-                    <h4 class="text-light">Option: Arbite</h4>
-                    <div id="opAb" class="row border bg-light">
-                        <div id="DeroullementCombat" class="col-5">
-                            <label for="btnEnterCom">1. </label>
-                            <button id="btnEnterCom" type="button" :disabled="(AttenteCombat.length < 2) || (Rouge || Blanc)" @click="envoie('COMBATDEBUT')">Faire entrer les combatants</button>
-                            <br/>
-                            <h6>2. Résultat du combat</h6>
-                            <div id="divChRel" class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label :class="[choix.variant ,Resultat === choix.text ? 'active focus': '']" v-for="(choix, cle) in ChoixResultat">
-                                    <input type="radio" name="Resultat" :value="choix.text" v-model="Resultat">{{choix.text}}
-                                </label>
-                            </div>
-                        </div>
-                        <div id="divResultat" class="col-5">
-                            <label for="btnResultat">3. </label>
-                            <button id="btnResultat" type="button" :disabled="FinCombat != ''" @click="Rouge == '' ? envoie('ROUGEQUITTER'):(Blanc == '' ? envoie('BLANCQUITTER'): envoie('FINCOMBAT'))">Envoyer Résultat: {{Resultat}}</button>
-                            <br/>
-                            <label for="btnExpulseCombatant">4. </label>
-                            <button id="btnExpulseCombatant" type="button" :disabled="FinCombat == ''" @click="envoie('VIDERCOMBATANT')" >Expulser les combatants</button>
-                        </div>
-                    </div>
-                </div>
-                <div v-show="(Rouge != null && Rouge.courriel === CompteProfile.courriel) || (Blanc != null && Blanc.courriel === CompteProfile.courriel)" class="col-4">
-                    <h4 class="text-light">Option: Combatant</h4>
-                    <div id="opCom" class="border bg-light ">
-                        <h5>Votre attaque</h5>
-                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <label class="btn btn-warning" :class="ActionCombatant === action ? 'active focus': ''" v-for="(action, cle) in ActionCombat">
-                                <input type="radio" name="ActionCombatant" class="btn-group-toggle" :value="action" v-model="ActionCombatant">{{action}}
-                            </label>
-                        </div>
-                        <button id="btnActionCom" type="button" class="btn btn-success" @click="envoie('ACTIONCOMBATANT')">Envoyer Résultat: {{ActionCombatant}}</button>
                     </div>
                 </div>
             </div>
@@ -241,8 +199,6 @@
             ActionCombatant: null,
             BlancAtt: "",
             RougeAtt: "",
-            //CommenceCombat: false,
-            //ArretCombat: false,
             FinCombat: ""
         },
        methods: {
@@ -258,30 +214,6 @@
                            break;
                        case typeEnvoieSpectateur:
                            this.stompClient.send("/app/majPositionKumite." + typeEnvoieAttenteCombat + "." + typeEnvoieSpectateur, {}, JSON.stringify(this.CompteProfile));
-                           break;
-                       case typeEnvoieArbite:
-                           this.stompClient.send("/app/demandeArbite", {}, JSON.stringify(this.CompteProfile));
-                           break;
-                       case typeEnvoieCommenceCombat:
-                           this.stompClient.send("/app/commenceCombat", {}, "");
-                           break;
-                       case typeEnvoieActionCombatant:
-                           this.stompClient.send("/app/envoyerAttaque." + this.ActionCombatant, {}, JSON.stringify(this.CompteProfile));
-                           break;
-                       case typeEnvoieFinCombat:
-                           this.stompClient.send("/app/finCombat.NORMAL", {}, this.Resultat);
-                           break;
-                       case typeEnvoieArbiteQuitter:
-                           this.stompClient.send("/app/finCombat.QUITTER", {}, typeEnvoieArbiteQuitter);
-                           break;
-                       case typeEnvoieBlancQuitter:
-                           this.stompClient.send("/app/finCombat.QUITTER", {}, typeEnvoieBlancQuitter);
-                           break;
-                       case typeEnvoieRougeQuitter:
-                           this.stompClient.send("/app/finCombat.QUITTER", {}, typeEnvoieRougeQuitter);
-                           break;
-                       case typeEnvoieExpulserCombatant:
-                           this.stompClient.send("/app/expulseCombatant", {},"");
                            break;
                    }
                }
