@@ -88,94 +88,106 @@ public class ControleurCombat {
     @GetMapping(value = "/Historique/{courriel}")
     public List<String> afficheCombat(@PathVariable String courriel) {
         Compte compte = compteOad.findByCourriel(courriel);
-        List<Combat> lstCombat = Stream
-                .concat(Stream.concat(combatOad.findByCmBlanc(compte).stream(),combatOad.findByCmRouge(compte).stream()),combatOad.findByCmArbite(compte).stream())
-                .distinct()
-                .sorted(Comparator.comparing(Combat::getDate))
-                .collect(Collectors.toList());
+
+        List<String> lstRetour = new ArrayList<>();
+        SimpleDateFormat formater = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
 
         List<Examen> lstExamen = examenOad.findByCmJuger(compte);
 
-        List<String> lstRetour = new ArrayList<>();
+        lstRetour.add("Historique du membre: " + compte.getCourriel());
 
-        SimpleDateFormat formater = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        //Si possède un examen
+        if (lstExamen.size() > 0) {
+            SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
 
-        ListIterator<Examen> itExamen = lstExamen.listIterator();
-        ListIterator<Combat> itCombat = lstCombat.listIterator();
-
-        String strEnteteCombat = "\nCombats\n" +
-                StringUtils.rightPad("|Date",25) + StringUtils.rightPad("|Arbite", 12) +
-                StringUtils.rightPad("|Crédits",10) + StringUtils.rightPad("|Rouge",12) +
-                StringUtils.rightPad("|Ceinture", 12) + StringUtils.rightPad("|Points",10) +
-                StringUtils.rightPad("|Blanc",12) + StringUtils.rightPad("|Ceinture",12) +
-                StringUtils.rightPad("|Points",10);
-
-        String strEnteteExamen = "\nExamen";
-
-        SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
-
-        int intNbPoint = 0;
-        int intNbCredit = 0;
-
-        //Pré-condition: La première tâche (temporel) est un examen (examen d'entré)
-        do {
-            //Ajoute examen
-            Examen examen = itExamen.next();
-
-            lstRetour.add(strEnteteExamen);
-            lstRetour.add("Date: " + formater.format(new Date(examen.getDate())) + " Points: " + intNbPoint +
-                    " Crédits: " + intNbCredit + " Ceinture: " + examen.getCeinture().getGroupe().name() +
-                    " Statut: " + (examen.getBooReussit() ? "Réussi" : "Échoué"));
+            List<Combat> lstCombat = Stream
+                    .concat(Stream.concat(combatOad.findByCmBlanc(compte).stream(),combatOad.findByCmRouge(compte).stream()),combatOad.findByCmArbite(compte).stream())
+                    .distinct()
+                    .sorted(Comparator.comparing(Combat::getDate))
+                    .collect(Collectors.toList());
 
 
-            if (examen.getBooReussit()) {
-                intNbPoint = 0;
-            }
+            ListIterator<Examen> itExamen = lstExamen.listIterator();
+            ListIterator<Combat> itCombat = lstCombat.listIterator();
 
-            intNbCredit -= examen.getBooReussit() ? 10 : 5;
+            String strEnteteCombat = "\nCombats\n" +
+                    StringUtils.rightPad("|Date",25) + StringUtils.rightPad("|Arbite", 12) +
+                    StringUtils.rightPad("|Crédits",10) + StringUtils.rightPad("|Rouge",12) +
+                    StringUtils.rightPad("|Ceinture", 12) + StringUtils.rightPad("|Points",10) +
+                    StringUtils.rightPad("|Blanc",12) + StringUtils.rightPad("|Ceinture",12) +
+                    StringUtils.rightPad("|Points",10);
 
-            int intNbElement = lstRetour.size();
+            String strEnteteExamen = "\nExamen";
 
-            //Ajout un combat si date plus petite que le prochain examen
-            while (itCombat.hasNext() &&
-                    (itExamen.hasNext() &&
-                            (lstCombat.get(itCombat.nextIndex()).getDate() < lstExamen.get(itExamen.nextIndex()).getDate()))) {
-                Combat combat = itCombat.next();
+            int intNbPoint = 0;
+            int intNbCredit = 0;
 
-                //Si premier élement, ajoute en-tete
-                if (intNbElement == lstRetour.size()) {
-                    lstRetour.add(strEnteteCombat);
+            //Pré-condition: La première tâche (temporel) est un examen (examen d'entré)
+            do {
+                //Ajoute examen
+                Examen examen = itExamen.next();
+
+                lstRetour.add(strEnteteExamen);
+                lstRetour.add("Date: " + formater.format(new Date(examen.getDate())) + " Points: " + intNbPoint +
+                        " Crédits: " + intNbCredit + " Ceinture: " + examen.getCeinture().getGroupe().name() +
+                        " Statut: " + (examen.getBooReussit() ? "Réussi" : "Échoué"));
+
+
+                if (examen.getBooReussit()) {
+                    intNbPoint = 0;
                 }
 
+                intNbCredit -= examen.getBooReussit() ? 10 : 5;
 
-                Integer intNbPointBlanc = salleCombatAndroid.calculePointPourCombat(combat).get(CouleurCombatant.BLANC);
-                Integer intNbPointRouge = salleCombatAndroid.calculePointPourCombat(combat).get(CouleurCombatant.ROUGE);
+                int intNbElement = lstRetour.size();
 
-                //ajoute combat
-                lstRetour.add("|" + StringUtils.rightPad(formater.format(new Date(combat.getDate())), 24)
-                        + "|" + StringUtils.rightPad(combat.getCmArbite().getCourriel(),11) + "|" +
-                        StringUtils.rightPad(combat.getIntGainPerteCreditArbite().toString(),9) + "|" +
-                        StringUtils.rightPad(combat.getCmRouge().getCourriel(),11) + "|" +
-                        StringUtils.rightPad(combat.getCeintureRouge().getGroupe().name(),11) + "|" +
-                        StringUtils.rightPad(intNbPointRouge.toString(),9) + "|" +
-                        StringUtils.rightPad(combat.getCmBlanc().getCourriel(),11) + "|" +
-                        StringUtils.rightPad(combat.getCeintureBanc().getGroupe().name(),11) + "|" +
-                        StringUtils.rightPad(intNbPointBlanc.toString(),9));
+                //Ajout un combat si date plus petite que le prochain examen
+                while (itCombat.hasNext() &&
+                        (itExamen.hasNext() &&
+                                (lstCombat.get(itCombat.nextIndex()).getDate() < lstExamen.get(itExamen.nextIndex()).getDate()))) {
+                    Combat combat = itCombat.next();
 
-                //Incrémente les crédits et les points
-                if (combat.getCmArbite().equals(compte)) {
-                    intNbCredit += combat.getIntGainPerteCreditArbite();
+                    //Si premier élement, ajoute en-tete
+                    if (intNbElement == lstRetour.size()) {
+                        lstRetour.add(strEnteteCombat);
+                    }
+
+
+                    Integer intNbPointBlanc = salleCombatAndroid.calculePointPourCombat(combat).get(CouleurCombatant.BLANC);
+                    Integer intNbPointRouge = salleCombatAndroid.calculePointPourCombat(combat).get(CouleurCombatant.ROUGE);
+
+                    //ajoute combat
+                    lstRetour.add("|" + StringUtils.rightPad(formater.format(new Date(combat.getDate())), 24)
+                            + "|" + StringUtils.rightPad(combat.getCmArbite().getCourriel(),11) + "|" +
+                            StringUtils.rightPad(combat.getIntGainPerteCreditArbite().toString(),9) + "|" +
+                            StringUtils.rightPad(combat.getCmRouge().getCourriel(),11) + "|" +
+                            StringUtils.rightPad(combat.getCeintureRouge().getGroupe().name(),11) + "|" +
+                            StringUtils.rightPad(intNbPointRouge.toString(),9) + "|" +
+                            StringUtils.rightPad(combat.getCmBlanc().getCourriel(),11) + "|" +
+                            StringUtils.rightPad(combat.getCeintureBanc().getGroupe().name(),11) + "|" +
+                            StringUtils.rightPad(intNbPointBlanc.toString(),9));
+
+                    //Incrémente les crédits et les points
+                    if (combat.getCmArbite().equals(compte)) {
+                        intNbCredit += combat.getIntGainPerteCreditArbite();
+                    }
+
+                    if (combat.getCmRouge().equals(compte)) {
+                        intNbPoint += intNbPointRouge;
+                    }
+                    else if (combat.getCmBlanc().equals(compte)) {
+                        intNbPoint += intNbPointBlanc;
+                    }
+
                 }
+            } while (itExamen.hasNext());
+        }
+        //Pas d'historique
+        else {
+            lstRetour.add("Pas de diplôme!");
+        }
 
-                if (combat.getCmRouge().equals(compte)) {
-                    intNbPoint += intNbPointRouge;
-                }
-                else if (combat.getCmBlanc().equals(compte)) {
-                    intNbPoint += intNbPointBlanc;
-                }
 
-            }
-        } while (itExamen.hasNext());
 
         return lstRetour;
     }
