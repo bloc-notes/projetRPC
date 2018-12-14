@@ -6,32 +6,7 @@
     <title>Kumite</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
           crossorigin="anonymous">
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <style>
-        /* Bootstrap Toggle v2.2.2 corrections for Bootsrtap 4*/
-        .toggle-off {
-            box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-        }
-        .toggle.off {
-            border-color: rgba(0, 0, 0, .25);
-        }
-
-        .toggle-handle {
-            background-color: white;
-            border: thin rgba(0, 0, 0, .25) solid;
-        }
-
-        .toggle.disabled {
-            background-color: red;
-        }
-
-        .red-tooltip + .tooltip > .tooltip-inner {
-            background-color: #f00;
-        }
-        .red-tooltip + .tooltip > .tooltip-arrow {
-            border-bottom-color:#f00;
-        }
-
         @media (min-width: 576px) {
             .jumbotron {
                 padding: 2rem 1rem;
@@ -78,17 +53,12 @@
     <script src="https://fr.vuejs.org/js/vue.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         const typeEnvoieConnection = "CONNECTION";
         const typeEnvoieSpectateur = "SPECTATEUR";
         const typeEnvoieAttenteCombat = "ATTENTECOMBAT";
-        const typeEnvoieArbiteQuitter = "ARBITEQUITTER";
         const typeEnvoieBlancQuitter = "BLANCQUITTER";
         const typeEnvoieRougeQuitter = "ROUGEQUITTER";
-        const typeEnvoieExpulserCombatant = "VIDERCOMBATANT";
     </script>
 </head>
 <body>
@@ -101,12 +71,9 @@
             </div>
             <br />
             <div class="row">
-                <div class="col-4 mr-5">
+                <div class="col-3 mr-5">
                     <h4 class="text-light">Profile</h4>
                     <div id="profile" class="media bg-light border">
-                        <div class="mr-2">
-                            <input id="cbTypeActeur" type="checkbox" data-toggle="toggle" data-on="Compétiteur" data-off="Spectateur" onchange="salle.Emplacement=$(this).prop('checked'); salle.majPosition();"><br/><br/>
-                        </div>
                         <img th:src="${profile.getAvatar().getImgAvatar()}" class="media-object">
                         <div class="media-body">
                             <span th:text="${profile.getAlias()}"></span><br/>
@@ -138,36 +105,38 @@
             </div>
         </div>
         <br/>
-        <div id="arene">
-            <h4>La surface de combat</h4>
-            <div class="d-flex border border-info rounded" style="min-height: 350px;">
-                <div class="mr-auto p-2">
-                    <h6>Combatant1</h6>
-                    <h6>[Blanc]</h6>
-                    <div v-if="Blanc" :class="Blanc.groupe">
-                        <img :src="Blanc.avatar.imgAvatar"><br/>
-                        {{Blanc.alias}} <br/> [<span v-if="(BlancAtt !== '' && Arbite != '' && Arbite.courriel === CompteProfile.courriel) || FinCombat ">{{BlancAtt}}</span>
-                                           <span v-else-if="BlancAtt">Attaque</span><span v-else>Attente</span>]
+        <div id="divTatami">
+            <h4>Tatami</h4>
+            <div class="d-flex border border-info rounded p-4 justify-content-between" style="min-height: 200px;">
+                <div id="divCombatantBlanc" >
+                    <div v-if="Blanc">
+                        <img :src="Blanc.avatar.imgAvatar">
                     </div>
                 </div>
-                <div class="p-2">
-                    <h6>Arbite</h6>
-                    <div v-if="Arbite" :class="Arbite.groupe">
-                        <img :src="Arbite.avatar.imgAvatar"><br/>
-                        {{Arbite.alias}}
+                <div id="divChoixBlanc">
+                    <div>
+                        <img :src="ActionCombat[BlancAtt]">
                     </div>
-                    <h6 v-show="FinCombat"> Victoire</h6>
-                    <h6 v-show="FinCombat">{{FinCombat}}</h6>
                 </div>
-                <div class="ml-auto p-2">
-                    <h6>Combatant2</h6>
-                    <h6>[Rouge]</h6>
-                    <div v-if="Rouge" :class="Rouge.groupe">
-                        <img :src="Rouge.avatar.imgAvatar"><br/>
-                        {{Rouge.alias}}
+                <div id="divVictoireBlanc">
+
+                </div>
+                <div id="divArbite" >
+                    <div v-if="Arbite">
+                        <img :src="Arbite.avatar.imgAvatar">
                     </div>
-                    <span v-if="Rouge">[<span v-if="(RougeAtt !== '' && Arbite != '' && Arbite.courriel === CompteProfile.courriel) || FinCombat">{{RougeAtt}}</span>
-                        <span v-else-if="RougeAtt">Attaque</span><span v-else>Attente</span>]</span>
+
+                </div>
+                <div id="divVictoireRouge">
+
+                </div>
+                <div id="divChoixRouge" v-if="RougeAtt">
+                    <img :src="ActionCombat[RougeAtt]">
+                </div>
+                <div id="divCombatantRouge" >
+                    <div v-if="Rouge">
+                        <img :src="Rouge.avatar.imgAvatar">
+                    </div>
                 </div>
             </div>
         </div>
@@ -192,14 +161,14 @@
             },
             Resultat: null,
             ActionCombat: {
-                1: "ROCHE",
-                2: "PAPIER",
-                3: "CISEAU"
+                "ROCHE" : "/images/roche.jpg",
+                "PAPIER" : "/images/papier.jpg",
+                "CISEAU" : "/images/ciseau.jpg"
             },
             ActionCombatant: null,
             BlancAtt: "",
             RougeAtt: "",
-            FinCombat: ""
+            FinCombat: "",
         },
        methods: {
            envoie: function(type) {
@@ -208,12 +177,6 @@
                    switch (type) {
                        case typeEnvoieConnection:
                            this.stompClient.send("/app/seConnectKumite", {},this.Courriel);
-                           break;
-                       case typeEnvoieAttenteCombat:
-                           this.stompClient.send("/app/majPositionKumite." + typeEnvoieSpectateur + "." + typeEnvoieAttenteCombat, {}, JSON.stringify(this.CompteProfile));
-                           break;
-                       case typeEnvoieSpectateur:
-                           this.stompClient.send("/app/majPositionKumite." + typeEnvoieAttenteCombat + "." + typeEnvoieSpectateur, {}, JSON.stringify(this.CompteProfile));
                            break;
                    }
                }
@@ -244,11 +207,6 @@
                         this.CompteProfile = this.Spectateur[0];
                     }
 
-                    if (this.Arbite != null && this.Arbite.courriel !== this.CompteProfile.courriel) {
-                        $('#cbArbite').bootstrapToggle('disable');
-                        $('#divArbite').prop('title', 'Il y a déjà un arbite!');
-                        $('#divArbite').css({opacity: "0.6"});
-                    }
                 });
 
                 this.stompClient.subscribe("/kumite/majSpectateur", tick => {
@@ -267,45 +225,8 @@
                    if (repArbite.strAction === "AJOUT") {
                        this.Arbite = repArbite.compte;
 
-                       if (this.CompteProfile.courriel !== this.Arbite.courriel) {
-                           $('#cbArbite').bootstrapToggle('disable');
-                           $('#divArbite').prop('title', 'Il y a déjà un arbite!');
-                           $('#divArbite').css({opacity: "0.6"});
-                       }
-                       else {
-                           $('#cbTypeActeur').bootstrapToggle('disable');
-                       }
                    }
                    else if (repArbite.strAction === "RETRAIT") {
-
-                       if (this.CompteProfile.courriel !== this.Arbite.courriel) {
-                           $('#cbArbite').bootstrapToggle('enable');
-                           $('#divArbite').prop('title', '');
-                           $('#divArbite').css({opacity: "1"});
-
-                           //Logique douteuse no2
-                           if (this.Blanc) {
-                               //Arbite quitte avant la fin du combat
-                               if (this.CompteProfile.courriel === this.Blanc.courriel && this.FinCombat === "" && (this.Rouge || this.Blanc)) {
-                                   this.envoie(typeEnvoieArbiteQuitter);
-                               }
-                           }
-                           else if (this.Rouge) {
-                               //Arbite quitte avant la fin du combat
-                               if (this.CompteProfile.courriel === this.Rouge.courriel && this.FinCombat === "" && (this.Rouge || this.Blanc)) {
-                                   this.envoie(typeEnvoieArbiteQuitter);
-                               }
-                           }
-                       }
-                       else {
-                           //logique douteuse
-                           $('#cbTypeActeur').bootstrapToggle('enable');
-
-                           if ($('#cbTypeActeur').prop('checked') === true) {
-                               $('#cbTypeActeur').bootstrapToggle('off');
-                           }
-                       }
-
                        this.Arbite = "";
                        this.Resultat = null;
                    }
@@ -317,20 +238,16 @@
                     if (repCombatantRouge.strAction === "AJOUT") {
                         this.Rouge = repCombatantRouge.compte;
 
-                        if (this.CompteProfile.courriel === this.Rouge.courriel) {
-                            $('#cbTypeActeur').bootstrapToggle('disable');
-                        }
                     }
                     else if (repCombatantRouge.strAction === "RETRAIT"){
                         if (this.CompteProfile.courriel === this.Rouge.courriel) {
-                            $('#cbTypeActeur').bootstrapToggle('enable');
                             this.ActionCombatant = null;
                         }
 
                         this.Rouge = null;
                         this.RougeAtt = "";
 
-                        //Il n'y a pu de combatant, donc le présédant combat n'est plus ...
+                        //Il n'y a pu de combatant, donc le précèdant combat n'est plus ...
                         if (!this.Blanc) {
                             this.FinCombat = "";
                             this.Resultat = null;
@@ -346,14 +263,9 @@
 
                     if(repCombatantBlanc.strAction === "AJOUT") {
                         this.Blanc = repCombatantBlanc.compte;
-
-                        if (this.CompteProfile.courriel === this.Blanc.courriel) {
-                            $('#cbTypeActeur').bootstrapToggle('disable');
-                        }
                     }
                     else if (repCombatantBlanc.strAction === "RETRAIT")  {
                         if (this.CompteProfile.courriel === this.Blanc.courriel) {
-                            $('#cbTypeActeur').bootstrapToggle('enable');
                             this.ActionCombatant = null;
                         }
 
@@ -383,21 +295,6 @@
                         case typeEnvoieBlancQuitter:
                             this.FinCombat = "Rouge";
                             break;
-                        case typeEnvoieArbiteQuitter:
-                            //vider le tatami après 5 secondes ...
-                            setTimeout(() => {
-                                //logique douteuse no3
-                                if (this.Blanc){
-                                    if (this.CompteProfile.courriel === this.Blanc.courriel) {
-                                        this.envoie(typeEnvoieExpulserCombatant);
-                                    }
-                                }
-                                else if (this.Rouge){
-                                    if (this.CompteProfile.courriel === this.Rouge.courriel) {
-                                        this.envoie(typeEnvoieExpulserCombatant);
-                                    }
-                                }
-                                }, 5000);
                         case "Égalité":
                             this.FinCombat = "Égalité";
                             break;

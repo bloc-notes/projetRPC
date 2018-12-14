@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -94,12 +93,6 @@ public class ConfiguraionSecuriteWeb extends WebSecurityConfigurerAdapter {
                         System.out.println("CONNEXION ---");
                         System.out.println("[" + utilisateur.getUsername() + "] => " +  ruAgent.getName().split(" ")[0] + " : " + ruAgent.getDeviceCategory().getName());
                         System.out.println("-------------");
-
-                        System.out.println("Test pour le fun de s'assurer que %%%");
-                        Object objPrincipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                        Utilisateur utilisateur1 = ((Utilisateur) objPrincipal);
-                        System.out.println("Utilisateur authentifier: => " + utilisateur1.getUsername());
-                        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
                         //response.sendRedirect("");
                         if (ruAgent.getType().getName().equalsIgnoreCase("Browser")) {

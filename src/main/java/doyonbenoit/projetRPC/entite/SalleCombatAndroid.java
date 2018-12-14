@@ -65,8 +65,8 @@ public class SalleCombatAndroid {
                 .collect(Collectors.toList());
 
         lstCombatBlancFiltrer.forEach(combat -> {
-            EnumGroupe blanc = combat.getCmBlanc().getGroupe().getGroupe();
-            EnumGroupe rouge = combat.getCmRouge().getGroupe().getGroupe();
+            EnumGroupe blanc = combat.getCeintureBanc().getGroupe();
+            EnumGroupe rouge = combat.getCeintureRouge().getGroupe();
 
             int intPoint = blanc.nbPointSelonCeinture(rouge);
 
@@ -79,8 +79,8 @@ public class SalleCombatAndroid {
                 .collect(Collectors.toList());
 
         lstCombatRougeFiltrer.forEach(combat -> {
-            EnumGroupe blanc = combat.getCmBlanc().getGroupe().getGroupe();
-            EnumGroupe rouge = combat.getCmRouge().getGroupe().getGroupe();
+            EnumGroupe blanc = combat.getCeintureBanc().getGroupe();
+            EnumGroupe rouge = combat.getCeintureRouge().getGroupe();
 
             int intPoint = rouge.nbPointSelonCeinture(blanc);
 
@@ -128,19 +128,19 @@ public class SalleCombatAndroid {
     public HashMap<CouleurCombatant,Integer> calculePointPourCombat(Combat combat) {
         HashMap<CouleurCombatant,Integer> mapRetour = new HashMap<>();
 
-        EnumGroupe blanc = combat.getCmBlanc().getGroupe().getGroupe();
-        EnumGroupe rouge = combat.getCmRouge().getGroupe().getGroupe();
+        EnumGroupe blanc = combat.getCeintureBanc().getGroupe();
+        EnumGroupe rouge = combat.getCeintureRouge().getGroupe();
 
         int intNbPointBlanc = combat.getIntGainPertePointBlanc() > 5
                 ? blanc.nbPointSelonCeinture(rouge)
                 : (combat.getIntGainPertePointBlanc() > 0
-                    ? Math.round(blanc.nbPointSelonCeinture(rouge))
+                    ? Math.round(blanc.nbPointSelonCeinture(rouge) / 2)
                     : 0);
 
         int intNbPointRouge = combat.getIntGainPertePointRouge() > 5
                 ? rouge.nbPointSelonCeinture(blanc)
                 : (combat.getIntGainPertePointRouge() > 0
-                    ? Math.round(rouge.nbPointSelonCeinture(blanc))
+                    ? Math.round(rouge.nbPointSelonCeinture(blanc) / 2)
                     : 0);
 
         mapRetour.put(CouleurCombatant.BLANC, intNbPointBlanc);

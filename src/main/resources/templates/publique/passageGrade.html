@@ -35,7 +35,7 @@
                         <div class="media-body">
                             <p>
                                 <span>{{combCeint.compte.alias}}</span> <span class="badge badge-danger" v-show="combCeint.booHonte">HONTE</span><br />
-                                Ceinture: <span>{{combCeint.compte.groupe}}</span><br />
+                                Ceinture: <span>{{combCeint.compte.groupe.groupe}}</span><br />
                                 Courriel: <span>{{combCeint.compte.courriel}}</span>
                             </p>
                         </div>
@@ -61,7 +61,7 @@
                         <div class="media-body">
                             <p>
                                 <span>{{combProm.compte.alias}}</span> <span class="badge badge-danger" v-show="combProm.booHonte">HONTE</span><br />
-                                Ceinture: <span>{{combProm.compte.groupe}}</span><br />
+                                Ceinture: <span>{{combProm.compte.groupe.groupe}}</span><br />
                                 Courriel: <span>{{combProm.compte.courriel}}</span>
                             </p>
                         </div>
@@ -81,9 +81,9 @@
                         <div class="media-body">
                             <p>
                                 <span>{{combNoir.alias}}</span><br />
-                                Ceinture: <span>{{combNoir.groupe}}</span><br />
+                                Ceinture: <span>{{combNoir.groupe.groupe}}</span><br />
                                 Courriel: <span>{{combNoir.courriel}}</span><br/>
-                                Role: <span>{{combNoir.role}}</span>
+                                Role: <span>{{combNoir.role.role}}</span>
                             </p>
                         </div>
                         <div>
@@ -206,7 +206,7 @@
                     this.arrPersonneCeintureNoir = response.data;
 
                     //Retire le ou les vénérables
-                    this.arrPersonneCeintureNoir = this.arrPersonneCeintureNoir.filter(combatantNoir => combatantNoir.role !== "VENERABLE");
+                    this.arrPersonneCeintureNoir = this.arrPersonneCeintureNoir.filter(combatantNoir => combatantNoir.role.role !== "VENERABLE");
                 })
                 .catch(error => {
                     console.log(error)
