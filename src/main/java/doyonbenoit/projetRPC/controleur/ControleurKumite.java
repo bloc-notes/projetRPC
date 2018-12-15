@@ -482,16 +482,8 @@ public class ControleurKumite {
                     System.out.println("3");
                 }else{
                     System.out.println("4");
-                    System.out.println(SalleCombatAndroid.lstArbitre.size());
-                    int indexArbitre=-2;
-                    while (arbitre == -1) {
-                        indexArbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
-                        System.out.println(indexArbitre);
-                        if (!SalleCombatAndroid.lstAttente.contains(SalleCombatAndroid.lstArbitre.get(indexArbitre))) {
-                            arbitre = indexArbitre;
-                        }
-                    }
-
+                    //System.out.println(SalleCombatAndroid.lstArbitre.size());
+                    arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
                     while (nombre1==nombre2){
                         nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
                         nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
