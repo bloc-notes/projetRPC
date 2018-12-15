@@ -122,6 +122,7 @@ public class ConfiguraionSecuriteWeb extends WebSecurityConfigurerAdapter {
                         Utilisateur utilisateur = ((Utilisateur) authentication.getPrincipal());
 
                         System.out.println("Déconnexion : " + utilisateur.getUsername());
+                        //test .......
 
                         if (ruAgent.getType().getName().equalsIgnoreCase("Browser")) {
                             response.sendRedirect("/login?logout");
