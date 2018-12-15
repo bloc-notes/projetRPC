@@ -47,7 +47,7 @@ public class ControleurCompte {
                 .collect(Collectors.toList());
 
         HashMap<String,List> courriel = new HashMap<>();
-        courriel.put("lstCourriel", lstCourriel);
+        courriel.put("liste", lstCourriel);
 
         return courriel;
     }
