@@ -304,7 +304,6 @@ public class ControleurKumite {
         SalleCombatAndroid.lstAttente.add(0, courriel);
         if (SalleCombatAndroid.lstAilleur.contains(courriel)){SalleCombatAndroid.lstAilleur.remove(courriel);}
         if (SalleCombatAndroid.lstSpectateur.contains(courriel)){SalleCombatAndroid.lstSpectateur.remove(courriel);}
-
         envoyerMessages();
     }
     @MessageMapping("/positionArbitre.{courriel}.{action}")
@@ -334,7 +333,9 @@ public class ControleurKumite {
     public void majPositionAndroidAfficherTout(){
         envoyerMessages();
     }
+
     private void envoyerMessages(){
+        System.out.println("Envoie du message");
         CombatOuNon();
         simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre.toString() );
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur.toString() );
@@ -424,7 +425,7 @@ public class ControleurKumite {
 
         Random random = new Random();
         if ((SalleCombatAndroid.lstAttente.size()>1)&&(SalleCombatAndroid.lstArbitre.size()>0)){
-            if ((Stream.concat(SalleCombatAndroid.lstArbitre.stream(),SalleCombatAndroid.lstAttente.stream()).collect(Collectors.toList()).stream().distinct()).toArray().length >2){
+            if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(),SalleCombatAndroid.lstAttente.stream()).distinct().count() >2){
                 ArrayList<String> tmpAttente = SalleCombatAndroid.lstAttente;
                 ArrayList<String> tmpArbitre = SalleCombatAndroid.lstArbitre;
                 System.out.println(SalleCombatAndroid.lstArbitre);
@@ -435,6 +436,7 @@ public class ControleurKumite {
                 int nombre2 = 0;
                 int arbitre = -1;
                 if (SalleCombatAndroid.lstArbitre.size()==1){
+                    System.out.println("un");
                     arbitre=0;
                     while (nombre1==nombre2){
                         nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
@@ -446,10 +448,11 @@ public class ControleurKumite {
                         }
                     }
                     //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(0)));
-                    System.out.println("1 nombre1:"+nombre1+" nombre2:"+nombre2+" arbitre:"+arbitre);
+                    //System.out.println("1 nombre1:"+nombre1+" nombre2:"+nombre2+" arbitre:"+arbitre);
 
                     //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
                 }else if (SalleCombatAndroid.lstAttente.size()==2){
+                    System.out.println("2");
                     arbitre=(random.nextInt(SalleCombatAndroid.lstAttente.size()));
                     if ((random.nextInt(2)+1)==1){
                         nombre2=1;
@@ -460,11 +463,11 @@ public class ControleurKumite {
                         //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
                         //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(0)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get((random.nextInt(SalleCombatAndroid.lstAttente.size())))));
                     }
-                    System.out.println("2");
+                    //System.out.println("2");
 
                 }else if (tmpAttente.equals(tmpArbitre)){
                     arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
-                    System.out.println("entre dans boucle infini");
+                    System.out.println("3");
                     while (nombre1==nombre2){
                         nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
                         nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
@@ -478,12 +481,17 @@ public class ControleurKumite {
                     //System.out.println("Rouge:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)).getCourriel()+" Blanc:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
                     System.out.println("3");
                 }else{
-                    while (arbitre==-1){
-                        int indexArbitre  = random.nextInt(SalleCombatAndroid.lstArbitre.size());
-                        if (!SalleCombatAndroid.lstAttente.contains(SalleCombatAndroid.lstArbitre.get(indexArbitre))){
-                            arbitre=indexArbitre;
+                    System.out.println("4");
+                    System.out.println(SalleCombatAndroid.lstArbitre.size());
+                    int indexArbitre=-2;
+                    while (arbitre == -1) {
+                        indexArbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
+                        System.out.println(indexArbitre);
+                        if (!SalleCombatAndroid.lstAttente.contains(SalleCombatAndroid.lstArbitre.get(indexArbitre))) {
+                            arbitre = indexArbitre;
                         }
                     }
+
                     while (nombre1==nombre2){
                         nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
                         nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
@@ -493,9 +501,10 @@ public class ControleurKumite {
                             nombre2=0;
                         }
                     }
+
                     //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
                     //System.out.println("Rouge:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)).getCourriel()+" Blanc:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
-                    System.out.println("4");
+                    //System.out.println("4");
                 }
 
                 //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
@@ -504,10 +513,10 @@ public class ControleurKumite {
                 combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
 
             }else{
-                System.out.println("\npas de combat car liste différentes:"+(Stream.concat(SalleCombatAndroid.lstArbitre.stream(),SalleCombatAndroid.lstAttente.stream()).collect(Collectors.toList()).stream().distinct()).toArray().length);
+                System.out.println("pas de combat car liste différentes:"+(Stream.concat(SalleCombatAndroid.lstArbitre.stream(),SalleCombatAndroid.lstAttente.stream()).collect(Collectors.toList()).stream().distinct()).toArray().length);
             }
         }else{
-            System.out.println("\npas de combat car attente:"+SalleCombatAndroid.lstAttente.size()+" et arbitre:"+SalleCombatAndroid.lstArbitre.size());
+            System.out.println("pas de combat car attente:"+SalleCombatAndroid.lstAttente.size()+" et arbitre:"+SalleCombatAndroid.lstArbitre.size());
         }
     }
 
