@@ -453,7 +453,12 @@ public class ControleurKumite {
                     //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
                 }else if (SalleCombatAndroid.lstAttente.size()==2){
                     System.out.println("2");
-                    arbitre=(random.nextInt(SalleCombatAndroid.lstAttente.size()));
+                    while (arbitre==-1){
+                        arbitre=(random.nextInt(SalleCombatAndroid.lstArbitre.size()));
+                        if (SalleCombatAndroid.lstAttente.contains(SalleCombatAndroid.lstArbitre.get(arbitre))){
+                            arbitre=-1;
+                        }
+                    }
                     if ((random.nextInt(2)+1)==1){
                         nombre2=1;
                         //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
