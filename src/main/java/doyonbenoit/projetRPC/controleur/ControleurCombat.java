@@ -90,7 +90,8 @@ public class ControleurCombat {
     }
 
     @GetMapping(value = "/Historique/{courriel}")
-    public List<String> afficheCombat(@PathVariable String courriel) {
+    public HashMap<String,List> afficheCombat(@PathVariable String courriel) {
+        HashMap<String, List> mapRetour = new HashMap<>();
         Compte compte = compteOad.findByCourriel(courriel);
 
         List<String> lstRetour = new ArrayList<>();
@@ -191,9 +192,9 @@ public class ControleurCombat {
             lstRetour.add("Pas de diplôme!");
         }
 
+        mapRetour.put("liste",lstRetour);
 
-
-        return lstRetour;
+        return mapRetour;
     }
     public void combatAndroid(Compte compteRouge,Compte compteBlanc,Compte compteArbitre) {
 
