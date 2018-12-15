@@ -66,7 +66,7 @@ public class ConfiguraionSecuriteWeb extends WebSecurityConfigurerAdapter {
         //permettre toutes les requêtes
         http.authorizeRequests()
                 .antMatchers("/Compte/tout", "/Combat/Historique/**").permitAll()
-                .antMatchers("/kumite/**","/Compte/**", "/PassageGrade/Mobile/**", "/Combat/**").authenticated()
+                .antMatchers("/kumite/**","/Compte/**", "/PassageGrade/Mobile/**", "/Combat/**").anonymous()
                 .antMatchers("/PassageGrade/**").hasAnyAuthority("SENSEI","VENERABLE")
                 .and()
                 .csrf()

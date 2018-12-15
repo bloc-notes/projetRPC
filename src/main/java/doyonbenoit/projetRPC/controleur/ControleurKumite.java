@@ -6,6 +6,7 @@ import doyonbenoit.projetRPC.entite.*;
 import doyonbenoit.projetRPC.enumeration.ActionDeplacement;
 import doyonbenoit.projetRPC.enumeration.Attaque;
 import doyonbenoit.projetRPC.securite.Utilisateur;
+import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,6 +16,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 
@@ -146,7 +148,7 @@ public class ControleurKumite {
             simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.COMBATANTROUGE.getStrCheminRetourMaj(), new ReponseKumite(compte, attaque.name()));
         }
     }
-
+/*
     @MessageMapping("/finCombat.{terminaison}")
     public void finCombat(@Payload String strVerdict, @DestinationVariable("terminaison") String strScenarioFin) {
         Combat combat = SalleCombat.getCombatEnCour();
@@ -225,7 +227,7 @@ public class ControleurKumite {
 
         simpMessagingTemplate.convertAndSend("/kumite/conclusionCombat", strVerdict);
     }
-
+*/
     @MessageMapping("/expulseCombatant")
     public void expulserCombatant() {
         if (SalleCombat.getCompteBlanc() != null) {
@@ -348,4 +350,5 @@ public class ControleurKumite {
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur.toString() );
         simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente.toString() );
     }
+
 }
