@@ -13,10 +13,10 @@ import java.util.stream.Stream;
 
 public class SalleCombatAndroid {
 
-    public static ArrayList<String> lstAilleur =  new ArrayList<>();
-    public static ArrayList<String> lstSpectateur =  new ArrayList<>();
-    public static ArrayList<String> lstAttente =  new ArrayList<>();
-    public static ArrayList<String> lstArbitre =  new ArrayList<>();
+    public static ArrayList<Compte> lstAilleur =  new ArrayList<>();
+    public static ArrayList<Compte> lstSpectateur =  new ArrayList<>();
+    public static ArrayList<Compte> lstAttente =  new ArrayList<>();
+    public static ArrayList<Compte> lstArbitre =  new ArrayList<>();
 
     /**
      * Retourne un map avec les clés : [Compte], [NbPoint], [Credit]
