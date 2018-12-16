@@ -89,6 +89,7 @@ public class ControleurPassageGrade {
                 compteJuger.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
 
                 compteOAD.save(compteJuger);
+                simpMessagingTemplate.convertAndSend("/kumite/MiseAJourCompte","");
             }
         }
         else {
@@ -98,7 +99,7 @@ public class ControleurPassageGrade {
         return valeurRetour;
     }
 
-    @GetMapping(value = "/Mobile/{courriel}.{booPasseOuCoule}")
+    /*@GetMapping(value = "/Mobile/{courriel}.{booPasseOuCoule}")
     public ResponseEntity<Void>  PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
 
         SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
@@ -122,10 +123,9 @@ public class ControleurPassageGrade {
                 compte.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
                 compteOAD.save(compte);
             }
-            simpMessagingTemplate.convertAndSend("/kumite/MiseAJourCompte","");
             return ResponseEntity.ok().build();
         }else {
             return ResponseEntity.badRequest().build();
         }
-    }
+    }*/
 }
