@@ -247,7 +247,7 @@ public class ControleurKumite {
             Random random = new Random();
             if ((SalleCombatAndroid.lstAttente.size() > 1) && (SalleCombatAndroid.lstArbitre.size() > 0)) {
                 //if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).distinct().count() > 2) {
-                if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).filter(distinctByKey(Compte::getCourriel)).count()>2){
+                if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).filter(distinctByKey(Compte::getCourriel)).count() > 2) {
                     //System.out.println(SalleCombatAndroid.lstArbitre);
                     //System.out.println(SalleCombatAndroid.lstAttente);
                     int nombre1 = 0;

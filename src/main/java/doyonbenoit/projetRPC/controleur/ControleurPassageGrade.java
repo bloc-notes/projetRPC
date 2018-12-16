@@ -50,7 +50,6 @@ public class ControleurPassageGrade {
                 //Est dans la honte?
                 Examen dernierExamen = examenOad.findFirstByCmJugerOrderByDateDesc(compte);
                 boolean booReussit = dernierExamen != null && !dernierExamen.getBooReussit();
-
                 lstCmValidePourExamen.add(new ReponseExamen(compte, intSoldeTotal, booReussit));
             }
 
@@ -78,7 +77,7 @@ public class ControleurPassageGrade {
         examen.setCmJuger(compteJuger);
         examen.setCmExaminateur(compteExaminateur);
         examen.setBooReussit(examenOtd.getReussit());
-
+        examen.setCeinture(compteJuger.getGroupe());
         if (!examenOad.save(examen).equals(null)) {
             valeurRetour = ResponseEntity.ok().build();
 
