@@ -1,5 +1,6 @@
 package doyonbenoit.projetRPC.configuration;
 
+import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.entite.SalleCombatAndroid;
 import doyonbenoit.projetRPC.securite.Utilisateur;
 import org.springframework.context.annotation.Configuration;
@@ -56,17 +57,17 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
                         System.out.println("user SE disconnect");
                         Authentication authentication2 = (Authentication) accessor.getUser();
                         Utilisateur utilisateur = (Utilisateur) authentication2.getPrincipal();
-                        if (SalleCombatAndroid.lstArbitre.contains(utilisateur.getUsername())) {
-                            SalleCombatAndroid.lstArbitre.remove(utilisateur.getUsername());
+                        if (SalleCombatAndroid.lstArbitre.contains(utilisateur.getCompte())) {
+                            SalleCombatAndroid.lstArbitre.remove(utilisateur.getCompte());
                         }
-                        if (SalleCombatAndroid.lstAilleur.contains(utilisateur.getUsername())) {
-                            SalleCombatAndroid.lstAilleur.remove(utilisateur.getUsername());
+                        if (SalleCombatAndroid.lstAilleur.contains(utilisateur.getCompte())) {
+                            SalleCombatAndroid.lstAilleur.remove(utilisateur.getCompte());
                         }
-                        if (SalleCombatAndroid.lstSpectateur.contains(utilisateur.getUsername())) {
-                            SalleCombatAndroid.lstSpectateur.remove(utilisateur.getUsername());
+                        if (SalleCombatAndroid.lstSpectateur.contains(utilisateur.getCompte())) {
+                            SalleCombatAndroid.lstSpectateur.remove(utilisateur.getCompte());
                         }
-                        if (SalleCombatAndroid.lstAttente.contains(utilisateur.getUsername())) {
-                            SalleCombatAndroid.lstAttente.remove(utilisateur.getUsername());
+                        if (SalleCombatAndroid.lstAttente.contains(utilisateur.getCompte())) {
+                            SalleCombatAndroid.lstAttente.remove(utilisateur.getCompte());
                         }
                         System.out.println(SalleCombatAndroid.lstArbitre.toString());
                         System.out.println(SalleCombatAndroid.lstAilleur.toString());
