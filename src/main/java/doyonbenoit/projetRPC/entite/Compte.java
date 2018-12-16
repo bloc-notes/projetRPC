@@ -101,6 +101,10 @@ public class Compte {
     }
 
 
+    public void setAncienDepuis(long ancienDepuis) {
+        this.ancienDepuis = ancienDepuis;
+    }
+
     @Override
     public String toString() {
         return "Compte{" +

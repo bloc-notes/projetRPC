@@ -96,58 +96,6 @@ public class ControleurPassageGrade {
         return valeurRetour;
     }
 
-    @PostMapping(value = "/promotionAncien")
-    public ResponseEntity<Void> obtenirPromotionAncien(@RequestBody String strCourriel) {
-        ResponseEntity<Void> valeurRetour = null;
-
-        Compte compteFuturAncien = compteOAD.findByCourriel(strCourriel);
-
-        compteFuturAncien.setRole(new Role(EnumRole.ANCIEN.ordinal() + 1,EnumRole.ANCIEN));
-
-        if (!compteOAD.save(compteFuturAncien).equals(null)) {
-            valeurRetour = ResponseEntity.ok().build();
-        }
-        else {
-            valeurRetour = ResponseEntity.badRequest().build();
-        }
-
-        return valeurRetour;
-    }
-
-    @PostMapping(value = "/promotionNoir")
-    public ResponseEntity<Void> promotionRoleCeintureNoir(@RequestBody String strCourriel) {
-        ResponseEntity<Void> valeurRetour = null;
-        Compte comptePromotion = compteOAD.findByCourriel(strCourriel);
-
-        if (comptePromotion != null) {
-            comptePromotion.setRole(new Role(EnumRole.SENSEI.ordinal() + 1,EnumRole.SENSEI));
-            compteOAD.save(comptePromotion);
-            valeurRetour = ResponseEntity.ok().build();
-        }
-        else {
-            valeurRetour = ResponseEntity.badRequest().build();
-        }
-
-        return valeurRetour;
-    }
-
-    @PostMapping(value = "/destitutionNoir")
-    public ResponseEntity<Void> destitutionRoleCeintureNoir(@RequestBody String strCourriel) {
-        ResponseEntity<Void> valeurRetour = null;
-        Compte compteDestitution = compteOAD.findByCourriel(strCourriel);
-
-        if (compteDestitution != null) {
-            compteDestitution.setRole(new Role(EnumRole.ANCIEN.ordinal() + 1,EnumRole.ANCIEN));
-            compteOAD.save(compteDestitution);
-            valeurRetour = ResponseEntity.ok().build();
-        }
-        else {
-            valeurRetour = ResponseEntity.badRequest().build();
-        }
-
-        return valeurRetour;
-    }
-
     @GetMapping(value = "/Mobile/{courriel}.{booPasseOuCoule}")
     public ResponseEntity<Void>  PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
 
@@ -174,28 +122,6 @@ public class ControleurPassageGrade {
             }
             return ResponseEntity.ok().build();
         }else {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-    @GetMapping(value = "/Mobile/Ancien.{courriel}")
-    public ResponseEntity<Void>  PasserAAncien(@PathVariable String courriel) {
-        SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
-        HashMap<String, Object> infoCompteComplet = salleCombatAndroid.calculePoint(courriel, combatOad,compteOAD,examenOad);
-
-        Compte compte = (Compte) infoCompteComplet.get(EnumInfoCompte.COMPTE.getNom());
-        int intSoldeTotal = (int) infoCompteComplet.get(EnumInfoCompte.CREDIT.getNom());
-        int intNbCombatArbitrer = (int) infoCompteComplet.get(EnumInfoCompte.ARBITE.getNom());
-
-        if (compte.getRole().getRole().equals(EnumRole.NOUVEAU)&&(intNbCombatArbitrer>=30)&&(intSoldeTotal>=10)){
-            int intRole = compte.getRole().getId();
-            System.out.println(intRole);
-            EnumRole roleSuivant = EnumRole.values()[intRole + 1];
-            System.out.println(roleSuivant);
-            compte.setRole(new Role(roleSuivant.ordinal(), roleSuivant));
-            System.out.println(compte.getRole().toString());
-            compteOAD.save(compte);
-            return ResponseEntity.ok().build();
-        }else{
             return ResponseEntity.badRequest().build();
         }
     }

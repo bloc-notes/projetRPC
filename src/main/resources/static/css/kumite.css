@@ -1,0 +1,50 @@
+@media (min-width: 576px) {
+    .jumbotron {
+        padding: 2rem 1rem;
+    }
+}
+
+.jumbotron {
+    margin-bottom: 0;
+}
+
+.NOIR {
+    background-color: black;
+    color: whitesmoke;
+}
+
+.MARON {
+    background-color: brown;
+    color: whitesmoke;
+}
+
+.BLEU {
+    background-color: blue;
+    color: whitesmoke;
+}
+
+.VERT {
+    background-color: green;
+    color: whitesmoke;
+}
+
+.ORANGE {
+    background-color: orange;
+}
+
+.JAUNE {
+    background-color: yellow;
+}
+
+.BLANC {
+    background-color: white;
+}
+
+.dimensionImage {
+    max-width: 150px;
+    max-height: 175px;
+}
+
+.dimensionDivMin {
+    min-height: 140px;
+}
