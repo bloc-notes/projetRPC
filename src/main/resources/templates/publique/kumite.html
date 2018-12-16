@@ -259,14 +259,20 @@
                     let pointBlanc = combat.intGainPertePointBlanc;
                     let pointRouge = combat.intGainPertePointRouge;
 
-                    if (pointBlanc < pointRouge)
-                        this.VictoireRouge = true;
-                    else if (pointBlanc > pointRouge)
-                        this.VictoireBlanc = true;
-                    else {
-                        this.VictoireBlanc = true;
-                        this.VictoireRouge = true;
-                    }
+                    this.VictoireBlanc = (pointBlanc > 0);
+                    this.VictoireRouge = (pointRouge > 0);
+                });
+
+                this.stompClient.subscribe("/kumite/CombatAndroid/4", tick => {
+                    this.Combat.Blanc = "";
+                    this.Combat.Rouge = "";
+                    this.Combat.Arbite = "";
+
+                    this.Combat.ChoixBlanc = "";
+                    this.Combat.ChoixRouge = "";
+
+                    this.VictoireRouge = false;
+                    this.VictoireBlanc = false;
                 });
 
 

@@ -74,7 +74,7 @@ public class EcouteurEvenementStomp implements ApplicationListener<SessionConnec
 
         StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
         if(sha.getUser() != null) {
-            //logger.info("[Connected] " + sha.getUser().getName());
+            logger.info("[Connected] " + sha.getUser().getName());
 
             String strTest = "{url=[http://127.0.0.1:8087/kumite], accept-version=[1.1,1.0], heart-beat=[10000,10000]}";
 
