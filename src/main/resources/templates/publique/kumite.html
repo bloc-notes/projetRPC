@@ -54,6 +54,9 @@
             max-height: 175px;
         }
 
+        .dimensionDivMin {
+            min-height: 140px;
+        }
     </style>
     <script src="https://fr.vuejs.org/js/vue.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
@@ -88,8 +91,8 @@
         <br/>
         <div id="spectateur" style="margin-top: 18rem;">
             <h4>Les spectateurs</h4>
-            <div class="d-flex border border-info rounded" style="min-height: 140px;">
-                <div class="m-3" :class="spect.groupe" v-for="spect in Spectateur">
+            <div class="d-flex border border-info rounded dimensionDivMin">
+                <div class="m-3" :class="spect.groupe.groupe" v-for="spect in Spectateur">
                     <img :src="spect.avatar.imgAvatar"><br/>
                     {{spect.alias}}
                 </div>
@@ -98,10 +101,20 @@
         <br/>
         <div id="competiteur" >
             <h4>En attente de combat</h4>
-            <div class="d-flex border border-info rounded" style="min-height: 140px;">
-                <div class="m-3" :class="attente.groupe" v-for="attente in AttenteCombat">
+            <div class="d-flex border border-info rounded dimensionDivMin">
+                <div class="m-3" :class="attente.groupe.groupe" v-for="attente in AttenteCombat">
                     <img :src="attente.avatar.imgAvatar"><br/>
                     {{attente.alias}}
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div id="futurArbite">
+            <h4>Les arbites volontaires</h4>
+            <div class="d-flex border border-info rounded dimensionDivMin">
+                <div class="m-3" :class="futurArbite.groupe.groupe" v-for="futurArbite in AttenteArbite">
+                    <img :src="futurArbite.avatar.imgAvatar"><br/>
+                    {{futurArbite.alias}}
                 </div>
             </div>
         </div>
@@ -160,18 +173,11 @@
             Spectateur: [],
             AttenteCombat: [],
             AttenteArbite: [],
-            ChoixResultat: {
-                1: {text: "Blanc", variant: "btn btn-light"},
-                2: {text: "Égalité", variant: "btn btn-secondary"},
-                3: {text: "Rouge", variant: "btn btn-danger"}
-            },
-            Resultat: null,
             ActionCombat: {
                 "ROCHE" : "/images/roche.jpg",
                 "PAPIER" : "/images/papier.jpg",
                 "CISEAU" : "/images/ciseau.jpg"
             },
-            ActionCombatant: null,
             Combat: {
                Rouge: "",
                 Blanc: "",
@@ -209,21 +215,6 @@
            },
             seConnect() {
                 this.connected = true;
-                /*
-                this.stompClient.subscribe("/kumite/connexion", tick => {
-                    let laSalle = JSON.parse(tick.body);
-                    this.Spectateur = laSalle.lesSpectateurs;
-                    this.AttenteCombat = laSalle.lesAttentesCombat;
-                    this.Arbite = laSalle.arbite;
-                    this.Rouge = laSalle.rouge;
-                    this.Blanc = laSalle.blanc;
-
-                    if (this.CompteProfile === "") {
-                        this.CompteProfile = this.Spectateur[0];
-                    }
-
-                });*/
-
 
                 this.stompClient.subscribe("/kumite/androidSpectateur", tick => {
                    this.Spectateur = JSON.parse(tick.body);
@@ -275,7 +266,7 @@
                     this.VictoireBlanc = false;
                 });
 
-
+                this.envoie(typeEnvoieConnection);
             },
 
        },

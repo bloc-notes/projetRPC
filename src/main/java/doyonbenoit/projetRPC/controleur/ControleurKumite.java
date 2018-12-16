@@ -6,17 +6,13 @@ import doyonbenoit.projetRPC.entite.*;
 import doyonbenoit.projetRPC.enumeration.ActionDeplacement;
 import doyonbenoit.projetRPC.enumeration.Attaque;
 import doyonbenoit.projetRPC.securite.Utilisateur;
-import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,61 +32,13 @@ public class ControleurKumite {
 
 
     @MessageMapping("/seConnectKumite")
-    @SendTo("/kumite/connexion")
-    public SalleCombat kumConnection (String strCourriel) {
-        return new SalleCombat();
+    public void kumConnection (String strCourriel) {
+        envoyerMessages();
     }
 
     public void enterSalle(String strCourriel) {
         Compte compte =  compteOad.findByCourriel(strCourriel);
-            //SalleCombat.getLstSpectateur().add(0,compte);
             SalleCombatAndroid.lstSpectateur.add(0,compte);
-            envoyerMessages();
-    }
-
-    @MessageMapping("/majPositionKumite.{depart}.{arrive}")
-    public void majPosition(@Payload Compte compte, @DestinationVariable("depart") String strDepart, @DestinationVariable("arrive") String strArrive) {
-        if (strDepart.equalsIgnoreCase(ActionDeplacement.SPECTATEUR.name())) {
-            if (strArrive.equalsIgnoreCase(ActionDeplacement.ATTENTECOMBAT.name())) {
-                SalleCombat.getLstAttenteCombat().add(0,compte);
-                simpMessagingTemplate.convertAndSend("/kumite/majAttenteCombat", new ReponseKumite(compte,"AJOUT"));
-            }
-
-            SalleCombat.getLstSpectateur().remove(compte);
-            simpMessagingTemplate.convertAndSend("/kumite/majSpectateur", new ReponseKumite(compte, "RETRAIT"));
-        }
-        else if(strDepart.equalsIgnoreCase(ActionDeplacement.ATTENTECOMBAT.name())) {
-            if (strArrive.equalsIgnoreCase(ActionDeplacement.SPECTATEUR.name())) {
-                SalleCombat.getLstSpectateur().add(0,compte);
-                simpMessagingTemplate.convertAndSend("/kumite/majSpectateur", new ReponseKumite(compte, "AJOUT"));
-            }
-
-            SalleCombat.getLstAttenteCombat().remove(compte);
-            simpMessagingTemplate.convertAndSend("/kumite/majAttenteCombat", new ReponseKumite(compte, "RETRAIT"));
-        }
-    }
-
-
-    @MessageMapping("/expulseCombatant")
-    public void expulserCombatant() {
-        if (SalleCombat.getCompteBlanc() != null) {
-            Compte cmBlanc = SalleCombat.getCompteBlanc();
-
-            SalleCombat.retireDeLaSalle(ActionDeplacement.COMBATANTBLANC,cmBlanc);
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.COMBATANTBLANC.getStrCheminRetourMaj(), new ReponseKumite(cmBlanc, "RETRAIT"));
-
-            SalleCombat.ajoutALaSalle(ActionDeplacement.ATTENTECOMBAT, cmBlanc);
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.ATTENTECOMBAT.getStrCheminRetourMaj(), new ReponseKumite(cmBlanc, "AJOUT"));
-        }
-        if (SalleCombat.getCompteRouge() != null) {
-            Compte cmRouge = SalleCombat.getCompteRouge();
-
-            SalleCombat.retireDeLaSalle(ActionDeplacement.COMBATANTROUGE,cmRouge);
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.COMBATANTROUGE.getStrCheminRetourMaj(), new ReponseKumite(cmRouge, "RETRAIT"));
-
-            SalleCombat.ajoutALaSalle(ActionDeplacement.ATTENTECOMBAT, cmRouge);
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.ATTENTECOMBAT.getStrCheminRetourMaj(), new ReponseKumite(cmRouge, "AJOUT"));
-        }
     }
 
     @GetMapping(value = "/kumite")
