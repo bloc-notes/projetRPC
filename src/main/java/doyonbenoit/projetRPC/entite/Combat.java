@@ -1,5 +1,7 @@
 package doyonbenoit.projetRPC.entite;
 
+import doyonbenoit.projetRPC.enumeration.Attaque;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -16,6 +18,8 @@ public class Combat {
     private Integer intGainPertePointBlanc;
     private Integer intGainPertePointRouge;
     private Integer intGainPerteCreditArbite;
+    private Attaque attRouge;
+    private Attaque attBlanc;
 
     public Combat(Compte cmArbite, Compte cmBlanc, Compte cmRouge, Groupe ceintureBanc, Groupe ceintureRouge) {
         this.cmArbite = cmArbite;
@@ -89,6 +93,16 @@ public class Combat {
         return intGainPerteCreditArbite;
     }
 
+    @Transient
+    public Attaque getAttRouge() {
+        return attRouge;
+    }
+
+    @Transient
+    public Attaque getAttBlanc() {
+        return attBlanc;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -128,6 +142,14 @@ public class Combat {
 
     public void setIntGainPerteCreditArbite(Integer intGainPerteCreditArbite) {
         this.intGainPerteCreditArbite = intGainPerteCreditArbite;
+    }
+
+    public void setAttRouge(Attaque attRouge) {
+        this.attRouge = attRouge;
+    }
+
+    public void setAttBlanc(Attaque attBlanc) {
+        this.attBlanc = attBlanc;
     }
 
     @Override

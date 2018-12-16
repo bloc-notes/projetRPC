@@ -68,168 +68,7 @@ public class ControleurKumite {
         }
     }
 
-    @MessageMapping("/demandeArbite")
-    public void demandeArbite(Compte compte){
-        if (SalleCombat.getCompteArbite() == null) {
-            //peut etre arbite
-            //sera transfere dans arbite(tatami)
-            //block l acces au role d arbite
 
-            //compte pas néssaisaire quand pas liste (a revoir ... polymor...)
-
-            //ajout arbite
-            SalleCombat.ajoutALaSalle(ActionDeplacement.ARBITE, compte);
-            simpMessagingTemplate.convertAndSend("/kumite/majArbite", new ReponseKumite(compte, "AJOUT"));
-
-            //retire de son lieu d'origine
-            ActionDeplacement actionDeplacementArbiteAvant = SalleCombat.estDansSalle(compte.getCourriel());
-            SalleCombat.retireDeLaSalle(actionDeplacementArbiteAvant,compte);
-            simpMessagingTemplate.convertAndSend("/kumite/" + actionDeplacementArbiteAvant.getStrCheminRetourMaj(), new ReponseKumite(compte, "RETRAIT"));
-        }
-        else {
-            //pas sur encore
-
-            SalleCombat.retireDeLaSalle(ActionDeplacement.ARBITE, compte);
-            simpMessagingTemplate.convertAndSend("/kumite/majArbite", new ReponseKumite(compte, "RETRAIT"));
-
-            //Remettre par défault l'utilisateur dans les gradins des spectateurs
-            SalleCombat.ajoutALaSalle(ActionDeplacement.SPECTATEUR, compte);
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.SPECTATEUR.getStrCheminRetourMaj(), new ReponseKumite(compte, "AJOUT"));
-        }
-    }
-
-
-    @MessageMapping("/commenceCombat")
-    public void faireEntrerCombatant() {
-        //S'il y a asser de personne pour commencer le combat
-        int intNbAttente = SalleCombat.getLstAttenteCombat().size();
-        if (intNbAttente> 1) {
-
-            //Combatant blanc (au hasard)
-            Random ran = new Random();
-            Compte cmBlanc = SalleCombat.getLstAttenteCombat().get(ran.nextInt(intNbAttente));
-
-            //retire le compte de la liste serveur
-            SalleCombat.retireDeLaSalle(ActionDeplacement.ATTENTECOMBAT,cmBlanc);
-
-            //Combatant rouge (au hasard) temporaire
-            ran = new Random();
-            Compte cmRouge = SalleCombat.getLstAttenteCombat().get(ran.nextInt(intNbAttente -1));
-
-            //Initialise combat
-            Combat combat = new Combat(SalleCombat.getCompteArbite(), cmBlanc, cmRouge, cmBlanc.getGroupe(), cmRouge.getGroupe());
-            SalleCombat.setCombatEnCour(combat);
-
-            //retire le compte de la liste serveur
-            SalleCombat.retireDeLaSalle(ActionDeplacement.ATTENTECOMBAT, cmRouge);
-
-            //Ajout des combatants dans leur nouvelle affectation serveur
-            SalleCombat.ajoutALaSalle(ActionDeplacement.COMBATANTBLANC, cmBlanc);
-            SalleCombat.ajoutALaSalle(ActionDeplacement.COMBATANTROUGE, cmRouge);
-
-            //Applique le déplacement au niveau client
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.COMBATANTBLANC.getStrCheminRetourMaj(), new ReponseKumite(cmBlanc, "AJOUT"));
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.ATTENTECOMBAT.getStrCheminRetourMaj(), new ReponseKumite(cmBlanc, "RETRAIT"));
-
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.COMBATANTROUGE.getStrCheminRetourMaj(), new ReponseKumite(cmRouge, "AJOUT"));
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.ATTENTECOMBAT.getStrCheminRetourMaj(), new ReponseKumite(cmRouge, "RETRAIT"));
-        }
-    }
-
-    @MessageMapping("/envoyerAttaque.{attaque}")
-    public void receptionAttaque(@Payload Compte compte, @DestinationVariable("attaque") String strAttaque) {
-        Attaque attaque = Attaque.valueOf(strAttaque);
-
-        System.out.println(SalleCombat.getCombatEnCour());
-        if (SalleCombat.getCombatEnCour().getCmBlanc().equals(compte)) {
-            SalleCombat.setAttaqueBlanc(attaque);
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.COMBATANTBLANC.getStrCheminRetourMaj(), new ReponseKumite(compte, attaque.name()));
-        }
-        else {
-            SalleCombat.setAttaqueRouge(attaque);
-            simpMessagingTemplate.convertAndSend("/kumite/" + ActionDeplacement.COMBATANTROUGE.getStrCheminRetourMaj(), new ReponseKumite(compte, attaque.name()));
-        }
-    }
-/*
-    @MessageMapping("/finCombat.{terminaison}")
-    public void finCombat(@Payload String strVerdict, @DestinationVariable("terminaison") String strScenarioFin) {
-        Combat combat = SalleCombat.getCombatEnCour();
-        combat.setDate(Calendar.getInstance().getTime().getTime());
-
-        //Déroulement nominal (personne a quitté et l'arbite a rendu son verdique)
-        if (strScenarioFin.equals("NORMAL")) {
-            if (strVerdict.equalsIgnoreCase("BLANC")) {
-                Compte cmGagnant = combat.getCmBlanc();
-                Compte cmPerdant = combat.getCmRouge();
-
-                combat.setIntGainPertePointBlanc(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
-                combat.setIntGainPerteCreditArbite(1);
-            }
-            else if (strVerdict.equalsIgnoreCase("ROUGE")) {
-                Compte cmGagnant = combat.getCmRouge();
-                Compte cmPerdant = combat.getCmBlanc();
-
-                combat.setIntGainPertePointRouge(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
-                combat.setIntGainPerteCreditArbite(1);
-            }
-            //Égalité
-            else {
-                Compte cmBlanc = combat.getCmBlanc();
-                Compte cmRouge = combat.getCmRouge();
-
-                int intNbPointBlanc = Math.round(cmBlanc.getGroupe().getGroupe().nbPointSelonCeinture(cmRouge.getGroupe().getGroupe()) / 2);
-                int intNbPointRouge = Math.round(cmRouge.getGroupe().getGroupe().nbPointSelonCeinture(cmBlanc.getGroupe().getGroupe()) / 2);
-
-                combat.setIntGainPertePointBlanc(intNbPointBlanc);
-                combat.setIntGainPertePointRouge(intNbPointRouge);
-
-                combat.setIntGainPerteCreditArbite(1);
-            }
-
-            //le client félicite le vaiqueur .... et affiche le résultat
-
-        }
-        //Une personne à quitter le combat, celui-ci est annulé et les pénalités sont appliquées
-        else {
-            System.out.println("Quelqun a quitter");
-            if (strVerdict.equals("ARBITEQUITTER")) {
-                Compte cmBlanc = combat.getCmBlanc();
-                Compte cmRouge = combat.getCmRouge();
-
-                int intNbPointBlanc = Math.round(cmBlanc.getGroupe().getGroupe().nbPointSelonCeinture(cmRouge.getGroupe().getGroupe()) / 2);
-                int intNbPointRouge = Math.round(cmRouge.getGroupe().getGroupe().nbPointSelonCeinture(cmBlanc.getGroupe().getGroupe()) / 2);
-
-                combat.setIntGainPertePointBlanc(intNbPointBlanc);
-                combat.setIntGainPertePointRouge(intNbPointRouge);
-
-                combat.setIntGainPerteCreditArbite(-5);
-
-                //Un chronometre niveau client va faire quitter après 5 secondes, car l'arbite ne peut pas le faire ...
-
-            }
-            else if (strVerdict.equals("BLANCQUITTER")) {
-                Compte cmGagnant = combat.getCmRouge();
-                Compte cmPerdant = combat.getCmBlanc();
-
-                combat.setIntGainPertePointRouge(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
-
-                combat.setIntGainPerteCreditArbite(1);
-            }
-            else {
-                Compte cmGagnant = combat.getCmBlanc();
-                Compte cmPerdant = combat.getCmRouge();
-
-                combat.setIntGainPertePointBlanc(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
-
-                combat.setIntGainPerteCreditArbite(1);
-            }
-        }
-        //Ajout le combat a la bd ...
-        combatOad.save(combat);
-
-        simpMessagingTemplate.convertAndSend("/kumite/conclusionCombat", strVerdict);
-    }
-*/
     @MessageMapping("/expulseCombatant")
     public void expulserCombatant() {
         if (SalleCombat.getCompteBlanc() != null) {
@@ -342,10 +181,10 @@ public class ControleurKumite {
     private void envoyerMessages(){
         System.out.println("Envoie du message");
         CombatOuNon();
-        simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre.toString() );
-        simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur.toString() );
-        simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur.toString() );
-        simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente.toString() );
+        simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
+        simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur);
+        simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur);
+        simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
     }
 
 
@@ -354,7 +193,7 @@ public class ControleurKumite {
         Combat combat = new Combat(compteArbitre,compteRouge, compteBlanc, compteBlanc.getGroupe(), compteRouge.getGroupe());
         combat.setDate(Calendar.getInstance().getTime().getTime());
         System.out.println("Envoie des positions des combatants et de l'arbitre");
-        simpMessagingTemplate.convertAndSend("/CombatAndroid/1",combat.toString());
+        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/1",combat);
         try{
             Thread.sleep(2000);
         }catch (Exception e){System.out.println(e);}
@@ -362,8 +201,12 @@ public class ControleurKumite {
         Random random = new Random();
         Attaque ChoixRouge = Attaque.values()[random.nextInt(2)+0];
         Attaque ChoixBlanc = Attaque.values()[random.nextInt(2)+0];
+
+        combat.setAttBlanc(ChoixBlanc);
+        combat.setAttRouge(ChoixRouge);
+
         System.out.println("Envoie des attaques des combatants");
-        simpMessagingTemplate.convertAndSend("/CombatAndroid/2",combat.toString());
+        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/2",combat);
         try{
             Thread.sleep(2000);
         }catch (Exception e){System.out.println(e);}
@@ -386,7 +229,7 @@ public class ControleurKumite {
             }
         }
         System.out.println("Envoie du résultat du combat: Rouge:"+ChoixRouge+" Blanc:"+ChoixBlanc);
-        simpMessagingTemplate.convertAndSend("/CombatAndroid/3",combat.toString());
+        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/3",combat);
         try{
             Thread.sleep(2000);
         }catch (Exception e){System.out.println(e);}

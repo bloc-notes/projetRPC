@@ -49,16 +49,17 @@
             background-color: white;
         }
 
+        .dimensionImage {
+            max-width: 150px;
+            max-height: 175px;
+        }
+
     </style>
     <script src="https://fr.vuejs.org/js/vue.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script>
         const typeEnvoieConnection = "CONNECTION";
-        const typeEnvoieSpectateur = "SPECTATEUR";
-        const typeEnvoieAttenteCombat = "ATTENTECOMBAT";
-        const typeEnvoieBlancQuitter = "BLANCQUITTER";
-        const typeEnvoieRougeQuitter = "ROUGEQUITTER";
     </script>
 </head>
 <body>
@@ -109,33 +110,40 @@
             <h4>Tatami</h4>
             <div class="d-flex border border-info rounded p-4 justify-content-between" style="min-height: 200px;">
                 <div id="divCombatantBlanc" >
-                    <div v-if="Blanc">
-                        <img :src="Blanc.avatar.imgAvatar">
+                    <div v-if="Combat.Blanc">
+                        <img :src="Combat.Blanc.avatar.imgAvatar">
                     </div>
                 </div>
                 <div id="divChoixBlanc">
-                    <div>
-                        <img :src="ActionCombat[BlancAtt]">
+                    <div v-if="Combat.ChoixBlanc">
+                        <img :src="ActionCombat[Combat.ChoixBlanc]" class="dimensionImage">
                     </div>
                 </div>
                 <div id="divVictoireBlanc">
+                    <div v-show="VictoireBlanc">
+                        <img src="/images/drapeauGauche.jpg" class="dimensionImage">
+                    </div>
 
                 </div>
                 <div id="divArbite" >
-                    <div v-if="Arbite">
-                        <img :src="Arbite.avatar.imgAvatar">
+                    <div v-if="Combat.Arbite">
+                        <img :src="Combat.Arbite.avatar.imgAvatar">
                     </div>
 
                 </div>
                 <div id="divVictoireRouge">
-
+                    <div v-show="VictoireRouge">
+                        <img src="/images/drapeauDroit.jpg" class="dimensionImage">
+                    </div>
                 </div>
-                <div id="divChoixRouge" v-if="RougeAtt">
-                    <img :src="ActionCombat[RougeAtt]">
+                <div id="divChoixRouge">
+                    <div v-if="Combat.ChoixRouge">
+                        <img :src="ActionCombat[Combat.ChoixRouge]" class="dimensionImage">
+                    </div>
                 </div>
                 <div id="divCombatantRouge" >
-                    <div v-if="Rouge">
-                        <img :src="Rouge.avatar.imgAvatar">
+                    <div v-if="Combat.Rouge">
+                        <img :src="Combat.Rouge.avatar.imgAvatar">
                     </div>
                 </div>
             </div>
@@ -151,9 +159,7 @@
             Emplacement: "",
             Spectateur: [],
             AttenteCombat: [],
-            Arbite: "",
-            Rouge: "",
-            Blanc: "",
+            AttenteArbite: [],
             ChoixResultat: {
                 1: {text: "Blanc", variant: "btn btn-light"},
                 2: {text: "Égalité", variant: "btn btn-secondary"},
@@ -166,9 +172,17 @@
                 "CISEAU" : "/images/ciseau.jpg"
             },
             ActionCombatant: null,
-            BlancAtt: "",
-            RougeAtt: "",
-            FinCombat: "",
+            Combat: {
+               Rouge: "",
+                Blanc: "",
+                Arbite: "",
+                ChoixBlanc: "",
+                ChoixRouge: "",
+                PointRouge: "",
+                PointBlanc: ""
+            },
+            VictoireRouge:false,
+            VictoireBlanc:false
         },
        methods: {
            envoie: function(type) {
@@ -195,6 +209,7 @@
            },
             seConnect() {
                 this.connected = true;
+                /*
                 this.stompClient.subscribe("/kumite/connexion", tick => {
                     let laSalle = JSON.parse(tick.body);
                     this.Spectateur = laSalle.lesSpectateurs;
@@ -207,122 +222,56 @@
                         this.CompteProfile = this.Spectateur[0];
                     }
 
+                });*/
+
+
+                this.stompClient.subscribe("/kumite/androidSpectateur", tick => {
+                   this.Spectateur = JSON.parse(tick.body);
                 });
 
-                this.stompClient.subscribe("/kumite/majSpectateur", tick => {
-                   let repSpect = JSON.parse(tick.body);
-                   this.maj(this.Spectateur,repSpect.strAction,repSpect.compte);
+                this.stompClient.subscribe("/kumite/androidArbitre", tick => {
+                   this.AttenteArbite = JSON.parse(tick.body);
                 });
 
-                this.stompClient.subscribe("/kumite/majAttenteCombat", tick => {
-                    let repAtt = JSON.parse(tick.body);
-                    this.maj(this.AttenteCombat, repAtt.strAction,repAtt.compte);
+                this.stompClient.subscribe("/kumite/androidAttente", tick => {
+                    this.AttenteCombat = JSON.parse(tick.body);
                 });
 
-                this.stompClient.subscribe("/kumite/majArbite", tick => {
-                   let repArbite = JSON.parse(tick.body);
+                this.stompClient.subscribe("/kumite/CombatAndroid/1", tick => {
+                   let combat = JSON.parse(tick.body);
 
-                   if (repArbite.strAction === "AJOUT") {
-                       this.Arbite = repArbite.compte;
+                   this.Combat.Blanc = combat.cmBlanc;
+                   this.Combat.Rouge = combat.cmRouge;
+                   this.Combat.Arbite = combat.cmArbite;
 
-                   }
-                   else if (repArbite.strAction === "RETRAIT") {
-                       this.Arbite = "";
-                       this.Resultat = null;
-                   }
                 });
 
-                this.stompClient.subscribe("/kumite/majCombatantRouge", tick => {
-                    let repCombatantRouge = JSON.parse(tick.body);
+                this.stompClient.subscribe("/kumite/CombatAndroid/2", tick => {
+                    let combat = JSON.parse(tick.body);
 
-                    if (repCombatantRouge.strAction === "AJOUT") {
-                        this.Rouge = repCombatantRouge.compte;
-
-                    }
-                    else if (repCombatantRouge.strAction === "RETRAIT"){
-                        if (this.CompteProfile.courriel === this.Rouge.courriel) {
-                            this.ActionCombatant = null;
-                        }
-
-                        this.Rouge = null;
-                        this.RougeAtt = "";
-
-                        //Il n'y a pu de combatant, donc le précèdant combat n'est plus ...
-                        if (!this.Blanc) {
-                            this.FinCombat = "";
-                            this.Resultat = null;
-                        }
-                    }
-                    else  {
-                        this.RougeAtt = repCombatantRouge.strAction;
-                    }
+                    this.Combat.ChoixRouge = combat.attRouge;
+                    this.Combat.ChoixBlanc = combat.attBlanc;
                 });
 
-                this.stompClient.subscribe("/kumite/majCombatantBlanc", tick => {
-                    let repCombatantBlanc = JSON.parse(tick.body);
+                this.stompClient.subscribe("/kumite/CombatAndroid/3", tick => {
+                    let combat = JSON.parse(tick.body);
 
-                    if(repCombatantBlanc.strAction === "AJOUT") {
-                        this.Blanc = repCombatantBlanc.compte;
-                    }
-                    else if (repCombatantBlanc.strAction === "RETRAIT")  {
-                        if (this.CompteProfile.courriel === this.Blanc.courriel) {
-                            this.ActionCombatant = null;
-                        }
+                    let pointBlanc = combat.intGainPertePointBlanc;
+                    let pointRouge = combat.intGainPertePointRouge;
 
-                        this.Blanc = null;
-                        this.BlancAtt = "";
-
-                        //Il n'y a pu de combatant, donc le présédant combat n'est plus ...
-                        if (!this.Rouge) {
-                            this.FinCombat = "";
-                            this.Resultat = null;
-                        }
-                    }
+                    if (pointBlanc < pointRouge)
+                        this.VictoireRouge = true;
+                    else if (pointBlanc > pointRouge)
+                        this.VictoireBlanc = true;
                     else {
-                        this.BlancAtt = repCombatantBlanc.strAction;
+                        this.VictoireBlanc = true;
+                        this.VictoireRouge = true;
                     }
                 });
 
-                this.stompClient.subscribe("/kumite/conclusionCombat", tick => {
-                    let repConclusion = tick.body;
 
-                    switch (repConclusion) {
-                        case "Blanc":
-                        case typeEnvoieRougeQuitter:
-                            this.FinCombat = "Blanc";
-                            break;
-                        case "Rouge":
-                        case typeEnvoieBlancQuitter:
-                            this.FinCombat = "Rouge";
-                            break;
-                        case "Égalité":
-                            this.FinCombat = "Égalité";
-                            break;
-                    }
-                });
-
-                this.envoie(typeEnvoieConnection);
             },
-           majPosition(){
-               //Bloque l'envoie de changement de possition quand le levier (spectateur/attentecombat) est réinitialisé
-               if (this.Arbite != null ? (this.Arbite.courriel !== this.CompteProfile.courriel): true) {
-                   if(this.Emplacement) {
-                       this.envoie(typeEnvoieAttenteCombat);
-                   }
-                   else {
-                       this.envoie(typeEnvoieSpectateur);
-                   }
-               }
-           },
-           maj: function(liste,action,qui){
 
-               if (action === "AJOUT") {
-                   liste.unshift(qui);
-               }
-               else {
-                   liste.splice(liste.findIndex(element => element.courriel === qui.courriel),1);
-               }
-           }
        },
         mounted(){
             this.connect();
