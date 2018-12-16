@@ -133,11 +133,11 @@ public class ControleurKumite {
 
     private void envoyerMessages(){
         System.out.println("Envoie du message");
-        CombatOuNon();
         simpMessagingTemplate.convertAndSend("/kumite/androidArbitre", SalleCombatAndroid.lstArbitre );
         simpMessagingTemplate.convertAndSend("/kumite/androidAilleur", SalleCombatAndroid.lstAilleur);
         simpMessagingTemplate.convertAndSend("/kumite/androidSpectateur", SalleCombatAndroid.lstSpectateur);
         simpMessagingTemplate.convertAndSend("/kumite/androidAttente", SalleCombatAndroid.lstAttente );
+        CombatOuNon();
     }
 
 
@@ -215,7 +215,7 @@ public class ControleurKumite {
             simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/4", combat);
 
             //METTRE A JOUR L'INFORMATION
-            new SalleCombatAndroid().raffaichirCompte();
+            simpMessagingTemplate.convertAndSend("/kumite/MiseAJourCompte","");
 
 
             SalleCombatAndroid.booCombatEnCours=false;

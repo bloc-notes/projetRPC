@@ -10,6 +10,7 @@ import doyonbenoit.projetRPC.enumeration.EnumInfoCompte;
 import doyonbenoit.projetRPC.enumeration.EnumRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -26,7 +27,8 @@ public class ControleurPassageGrade {
 
     @Autowired
     ExamenOad examenOad;
-
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     @GetMapping(value = "/ExamenCeinturePoss")
     public Map<String,List<ReponseExamen>> personnePourExamenCeinture() {
 
@@ -44,7 +46,7 @@ public class ControleurPassageGrade {
             int intNbPointCombat = (int) infoCompteComplet.get(EnumInfoCompte.POINT.getNom());
             int intNbCombatArbitrer = (int) infoCompteComplet.get(EnumInfoCompte.ARBITE.getNom());
 
-            if (!compte.getGroupe().getGroupe().equals(EnumGroupe.NOIRE) && (intSoldeTotal >= 10) && (intNbPointCombat >= 100 )) {
+            if (!compte.getGroupe().getGroupe().equals(EnumGroupe.NOIRE) && (intSoldeTotal >= 10) && (intNbPointCombat >= 100 )&& (!compte.getGroupe().getGroupe().equals(EnumGroupe.PATATE))) {
                 //Est dans la honte?
                 Examen dernierExamen = examenOad.findFirstByCmJugerOrderByDateDesc(compte);
                 boolean booReussit = dernierExamen != null && !dernierExamen.getBooReussit();
@@ -120,6 +122,7 @@ public class ControleurPassageGrade {
                 compte.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
                 compteOAD.save(compte);
             }
+            simpMessagingTemplate.convertAndSend("/kumite/MiseAJourCompte","");
             return ResponseEntity.ok().build();
         }else {
             return ResponseEntity.badRequest().build();

@@ -47,7 +47,7 @@ public class SalleCombatAndroid {
 
         //à un examen réussit
         if (lstExamenAnterieurReussit.size() >= 1) {
-            System.out.println("POSSEDE UN EXAMEN\n--------------");
+            //System.out.println("POSSEDE UN EXAMEN\n--------------");
             Long dateDebut = lstExamenAnterieurReussit.get(0).getDate();
             //Long dateActuel = Calendar.getInstance().getTime().getTime();
 
@@ -125,7 +125,7 @@ public class SalleCombatAndroid {
         compteComplet.put("NbPoint", intNbPointCombat);
         compteComplet.put("Credit", intSoldeTotal);
         compteComplet.put("NbCombatArbiter", intNbCombatArbitrer);
-
+        System.out.println(compte.getCourriel()+" Points:"+intNbPointCombat+" Credits:"+intSoldeTotal+" nbArbitrer"+intNbCombatArbitrer);
         return compteComplet;
     }
 
@@ -151,8 +151,5 @@ public class SalleCombatAndroid {
         mapRetour.put(CouleurCombatant.ROUGE, intNbPointRouge);
 
         return mapRetour;
-    }
-    public void raffaichirCompte(){
-        simpMessagingTemplate.convertAndSend("/kumite/MiseAJourCompte","");
     }
 }
