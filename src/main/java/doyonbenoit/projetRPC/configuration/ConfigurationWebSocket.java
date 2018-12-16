@@ -80,6 +80,11 @@ public class ConfigurationWebSocket  implements WebSocketMessageBrokerConfigurer
                 System.out.println("-------------Fin--------------");
                 return message;
             }
+
         });
+
+
     }
+
+
 }

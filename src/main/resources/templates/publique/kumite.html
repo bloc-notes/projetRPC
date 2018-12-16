@@ -266,6 +266,10 @@
                     this.VictoireBlanc = false;
                 });
 
+                this.stompClient.subscribe("/kumite/MiseAJourCompte", tick => {
+                   console.log("Parfait.........................");
+                });
+
                 this.envoie(typeEnvoieConnection);
             },
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,6 +19,8 @@
     </style>
     <script src="https://fr.vuejs.org/js/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
  </head>
 <body>
 <div id="app" class="jumbotron jumbotron-fluid">
@@ -72,6 +74,33 @@
            }
        },
        methods: {
+           connect() {
+               this.socket = new SockJS("/webSocket");
+               this.stompClient = Stomp.over(this.socket);
+               this.stompClient.connect({url: window.location.href }, frame => {
+                       this.seConnect();
+                   },
+                   error => {
+                       console.log(error);
+                       this.connected = false;
+                   }
+               );
+           },
+           seConnect() {
+               this.connected = true;
+
+               this.stompClient.subscribe("/kumite/MiseAJourCompte", tick => {
+                   axios.get("http://127.0.0.1:8087/PassageGrade/ExamenCeinturePoss")
+                       .then(response => {
+                           this.arrPersonneExamCeinture = response.data.examen;
+                           this.arrPersonnePromotion = response.data.promotion;
+                       })
+                       .catch(error => {
+                           console.log(error)
+                       });
+               });
+           },
+
            passeExamen: function (personneJuger, verdict) {
                this.examen.juger = personneJuger;
                this.examen.reussit = verdict;
@@ -105,6 +134,7 @@
                 .catch(error => {
                     console.log(error)
                 });
+            this.connect();
         }
     });
 </script>
