@@ -199,8 +199,8 @@ public class ControleurKumite {
         }catch (Exception e){System.out.println(e);}
 
         Random random = new Random();
-        Attaque ChoixRouge = Attaque.values()[random.nextInt(2)+0];
-        Attaque ChoixBlanc = Attaque.values()[random.nextInt(2)+0];
+        Attaque ChoixRouge = Attaque.values()[random.nextInt(3)];
+        Attaque ChoixBlanc = Attaque.values()[random.nextInt(3)];
 
         combat.setAttBlanc(ChoixBlanc);
         combat.setAttRouge(ChoixRouge);
@@ -212,6 +212,7 @@ public class ControleurKumite {
         }catch (Exception e){System.out.println(e);}
 
         if (ChoixRouge.equals(Attaque.ROCHE)){
+
             if (ChoixBlanc.equals(Attaque.PAPIER)){
                 gagnantBlanc(combat);
             }else if (ChoixBlanc.equals(Attaque.CISEAU)){
@@ -230,10 +231,11 @@ public class ControleurKumite {
         }
         System.out.println("Envoie du résultat du combat: Rouge:"+ChoixRouge+" Blanc:"+ChoixBlanc);
         simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/3",combat);
-        try{
-            Thread.sleep(2000);
-        }catch (Exception e){System.out.println(e);}
         combatOad.save(combat);
+        try{
+            Thread.sleep(5000);
+        }catch (Exception e){System.out.println(e);}
+        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/4",combat);
 
     }
     public void gagnantBlanc(Combat combat){
