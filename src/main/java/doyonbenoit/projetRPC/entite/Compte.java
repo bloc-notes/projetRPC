@@ -48,6 +48,9 @@ public class Compte {
     public long getAncienDepuis() {
         return ancienDepuis;
     }
+    public void setAncienDepuis(long ancienDepuis) {
+        this.ancienDepuis = ancienDepuis;
+    }
 
     @Column(name = "password")
     public String getMotDePasse() {

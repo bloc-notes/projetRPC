@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -262,6 +265,11 @@ public class ControleurKumite {
                 System.out.println(e);
             }
             simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/4", combat);
+
+            //METTRE A JOUR L'INFORMATION
+            new SalleCombatAndroid().raffaichirCompte();
+
+
             SalleCombatAndroid.booCombatEnCours=false;
             CombatOuNon();
         }
@@ -282,13 +290,18 @@ public class ControleurKumite {
 
         combat.setIntGainPerteCreditArbite(1);
     }
+    public static <Compte> Predicate<Compte> distinctByKey(Function<? super Compte, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
     public void CombatOuNon() {
         if (!SalleCombatAndroid.booCombatEnCours) {
             Random random = new Random();
             if ((SalleCombatAndroid.lstAttente.size() > 1) && (SalleCombatAndroid.lstArbitre.size() > 0)) {
-                if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).distinct().count() > 2) {
-                    System.out.println(SalleCombatAndroid.lstArbitre);
-                    System.out.println(SalleCombatAndroid.lstAttente);
+                //if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).distinct().count() > 2) {
+                if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).filter(distinctByKey(Compte::getCourriel)).count()>2){
+                    //System.out.println(SalleCombatAndroid.lstArbitre);
+                    //System.out.println(SalleCombatAndroid.lstAttente);
                     int nombre1 = 0;
                     int nombre2 = 0;
                     int arbitre = -1;

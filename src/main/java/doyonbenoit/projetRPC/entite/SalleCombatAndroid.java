@@ -6,6 +6,8 @@ import doyonbenoit.projetRPC.OAD.ExamenOad;
 import doyonbenoit.projetRPC.enumeration.CouleurCombatant;
 import doyonbenoit.projetRPC.enumeration.EnumGroupe;
 import doyonbenoit.projetRPC.enumeration.EnumRole;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +20,8 @@ public class SalleCombatAndroid {
     public static ArrayList<Compte> lstAttente =  new ArrayList<>();
     public static ArrayList<Compte> lstArbitre =  new ArrayList<>();
     public static boolean booCombatEnCours = false;
-
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     /**
      * Retourne un map avec les clés : [Compte], [NbPoint], [Credit]
      *
@@ -148,5 +151,8 @@ public class SalleCombatAndroid {
         mapRetour.put(CouleurCombatant.ROUGE, intNbPointRouge);
 
         return mapRetour;
+    }
+    public void raffaichirCompte(){
+        simpMessagingTemplate.convertAndSend("/kumite/MiseAJourCompte","");
     }
 }
