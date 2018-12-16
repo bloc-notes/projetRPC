@@ -189,53 +189,63 @@ public class ControleurKumite {
 
 
     public void combatAndroid(Compte compteRouge,Compte compteBlanc,Compte compteArbitre) {
-
-        Combat combat = new Combat(compteArbitre,compteRouge, compteBlanc, compteBlanc.getGroupe(), compteRouge.getGroupe());
-        combat.setDate(Calendar.getInstance().getTime().getTime());
-        System.out.println("Envoie des positions des combatants et de l'arbitre");
-        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/1",combat);
-        try{
-            Thread.sleep(2000);
-        }catch (Exception e){System.out.println(e);}
-
-        Random random = new Random();
-        Attaque ChoixRouge = Attaque.values()[random.nextInt(3)];
-        Attaque ChoixBlanc = Attaque.values()[random.nextInt(3)];
-
-        combat.setAttBlanc(ChoixBlanc);
-        combat.setAttRouge(ChoixRouge);
-
-        System.out.println("Envoie des attaques des combatants");
-        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/2",combat);
-        try{
-            Thread.sleep(2000);
-        }catch (Exception e){System.out.println(e);}
-
-        if (ChoixRouge.equals(Attaque.ROCHE)){
-
-            if (ChoixBlanc.equals(Attaque.PAPIER)){
-                gagnantBlanc(combat);
-            }else if (ChoixBlanc.equals(Attaque.CISEAU)){
-                gagnantRouge(combat);
-            }else{
-                gagnantEgalite(combat);
+        if (!SalleCombatAndroid.booCombatEnCours) {
+            SalleCombatAndroid.booCombatEnCours=true;
+            Combat combat = new Combat(compteArbitre, compteRouge, compteBlanc, compteBlanc.getGroupe(), compteRouge.getGroupe());
+            combat.setDate(Calendar.getInstance().getTime().getTime());
+            System.out.println("Envoie des positions des combatants et de l'arbitre");
+            simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/1", combat);
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {
+                System.out.println(e);
             }
-        }else{
-            if (ChoixBlanc.equals(Attaque.PAPIER)){
-                gagnantEgalite(combat);
-            }else if (ChoixBlanc.equals(Attaque.CISEAU)){
-                gagnantBlanc(combat);
-            }else{
-                gagnantRouge(combat);
+
+            Random random = new Random();
+            Attaque ChoixRouge = Attaque.values()[random.nextInt(3)];
+            Attaque ChoixBlanc = Attaque.values()[random.nextInt(3)];
+
+            combat.setAttBlanc(ChoixBlanc);
+            combat.setAttRouge(ChoixRouge);
+
+            System.out.println("Envoie des attaques des combatants: Rouge:" + ChoixRouge + " Blanc:" + ChoixBlanc);
+            simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/2", combat);
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {
+                System.out.println(e);
             }
+
+            if (ChoixRouge.equals(Attaque.ROCHE)) {
+
+                if (ChoixBlanc.equals(Attaque.PAPIER)) {
+                    gagnantBlanc(combat);
+                } else if (ChoixBlanc.equals(Attaque.CISEAU)) {
+                    gagnantRouge(combat);
+                } else {
+                    gagnantEgalite(combat);
+                }
+            } else {
+                if (ChoixBlanc.equals(Attaque.PAPIER)) {
+                    gagnantEgalite(combat);
+                } else if (ChoixBlanc.equals(Attaque.CISEAU)) {
+                    gagnantBlanc(combat);
+                } else {
+                    gagnantRouge(combat);
+                }
+            }
+            System.out.println("Envoie du résultat du combat");
+            simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/3", combat);
+            combatOad.save(combat);
+            try {
+                Thread.sleep(5000);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/4", combat);
+            SalleCombatAndroid.booCombatEnCours=false;
+            CombatOuNon();
         }
-        System.out.println("Envoie du résultat du combat: Rouge:"+ChoixRouge+" Blanc:"+ChoixBlanc);
-        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/3",combat);
-        combatOad.save(combat);
-        try{
-            Thread.sleep(5000);
-        }catch (Exception e){System.out.println(e);}
-        simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/4",combat);
 
     }
     public void gagnantBlanc(Combat combat){

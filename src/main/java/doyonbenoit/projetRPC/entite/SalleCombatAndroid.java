@@ -17,6 +17,7 @@ public class SalleCombatAndroid {
     public static ArrayList<Compte> lstSpectateur =  new ArrayList<>();
     public static ArrayList<Compte> lstAttente =  new ArrayList<>();
     public static ArrayList<Compte> lstArbitre =  new ArrayList<>();
+    public static boolean booCombatEnCours = false;
 
     /**
      * Retourne un map avec les clés : [Compte], [NbPoint], [Credit]
