@@ -220,25 +220,42 @@ public class ControleurKumite {
 
                 if (ChoixBlanc.equals(Attaque.PAPIER)) {
                     gagnantBlanc(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant blanc");
                 } else if (ChoixBlanc.equals(Attaque.CISEAU)) {
                     gagnantRouge(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant rouge");
                 } else {
                     gagnantEgalite(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant egalité");
                 }
-            } else {
+            } else if (ChoixRouge.equals(Attaque.PAPIER)) {
                 if (ChoixBlanc.equals(Attaque.PAPIER)) {
                     gagnantEgalite(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant egalité");
                 } else if (ChoixBlanc.equals(Attaque.CISEAU)) {
                     gagnantBlanc(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant blanc");
                 } else {
                     gagnantRouge(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant rouge");
+                }
+            }else{
+                if (ChoixBlanc.equals(Attaque.PAPIER)) {
+                    gagnantRouge(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant rouge");
+                } else if (ChoixBlanc.equals(Attaque.CISEAU)) {
+                    gagnantEgalite(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant egalité");
+                } else {
+                    gagnantBlanc(combat);
+                    System.out.println("Envoie du résultat du combat: Gagnant blanc");
                 }
             }
-            System.out.println("Envoie du résultat du combat");
+
             simpMessagingTemplate.convertAndSend("/kumite/CombatAndroid/3", combat);
             combatOad.save(combat);
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -249,21 +266,12 @@ public class ControleurKumite {
 
     }
     public void gagnantBlanc(Combat combat){
-        Compte cmGagnant = combat.getCmBlanc();
-        Compte cmPerdant = combat.getCmRouge();
-
         combat.setIntGainPertePointBlanc(10);
         combat.setIntGainPerteCreditArbite(1);
     }public void gagnantRouge(Combat combat){
-        Compte cmGagnant = combat.getCmRouge();
-        Compte cmPerdant = combat.getCmBlanc();
-
         combat.setIntGainPertePointRouge(10);
         combat.setIntGainPerteCreditArbite(1);
     }public void gagnantEgalite(Combat combat){
-        Compte cmBlanc = combat.getCmBlanc();
-        Compte cmRouge = combat.getCmRouge();
-
         int intNbPointBlanc = Math.round(5);
         int intNbPointRouge = Math.round(5);
 
@@ -273,94 +281,95 @@ public class ControleurKumite {
         combat.setIntGainPerteCreditArbite(1);
     }
     public void CombatOuNon() {
-
-        Random random = new Random();
-        if ((SalleCombatAndroid.lstAttente.size()>1)&&(SalleCombatAndroid.lstArbitre.size()>0)){
-            if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(),SalleCombatAndroid.lstAttente.stream()).distinct().count() >2){
-                System.out.println(SalleCombatAndroid.lstArbitre);
-                System.out.println(SalleCombatAndroid.lstAttente);
-                int nombre1 = 0;
-                int nombre2 = 0;
-                int arbitre = -1;
-                if (SalleCombatAndroid.lstArbitre.size()==1){
-                    System.out.println("un");
-                    arbitre=0;
-                    while (nombre1==nombre2){
-                        nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
-                        nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
-                        if (SalleCombatAndroid.lstAttente.get(nombre1).getCourriel()==SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()||
-                                SalleCombatAndroid.lstAttente.get(nombre2).getCourriel()==SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()){
-                            nombre1=0;
-                            nombre2=0;
+        if (!SalleCombatAndroid.booCombatEnCours) {
+            Random random = new Random();
+            if ((SalleCombatAndroid.lstAttente.size() > 1) && (SalleCombatAndroid.lstArbitre.size() > 0)) {
+                if (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).distinct().count() > 2) {
+                    System.out.println(SalleCombatAndroid.lstArbitre);
+                    System.out.println(SalleCombatAndroid.lstAttente);
+                    int nombre1 = 0;
+                    int nombre2 = 0;
+                    int arbitre = -1;
+                    if (SalleCombatAndroid.lstArbitre.size() == 1) {
+                        System.out.println("un");
+                        arbitre = 0;
+                        while (nombre1 == nombre2) {
+                            nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
+                            nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
+                            if (SalleCombatAndroid.lstAttente.get(nombre1).getCourriel() == SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel() ||
+                                    SalleCombatAndroid.lstAttente.get(nombre2).getCourriel() == SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()) {
+                                nombre1 = 0;
+                                nombre2 = 0;
+                            }
                         }
-                    }
-                    //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(0)));
-                    //System.out.println("1 nombre1:"+nombre1+" nombre2:"+nombre2+" arbitre:"+arbitre);
+                        //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(0)));
+                        //System.out.println("1 nombre1:"+nombre1+" nombre2:"+nombre2+" arbitre:"+arbitre);
 
-                    //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
-                }else if (SalleCombatAndroid.lstAttente.size()==2){
-                    System.out.println("2");
-                    while (arbitre==-1){
-                        arbitre=(random.nextInt(SalleCombatAndroid.lstArbitre.size()));
-                        if (SalleCombatAndroid.lstAttente.contains(SalleCombatAndroid.lstArbitre.get(arbitre))){
-                            arbitre=-1;
+                        //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
+                    } else if (SalleCombatAndroid.lstAttente.size() == 2) {
+                        System.out.println("2");
+                        while (arbitre == -1) {
+                            arbitre = (random.nextInt(SalleCombatAndroid.lstArbitre.size()));
+                            if (SalleCombatAndroid.lstAttente.contains(SalleCombatAndroid.lstArbitre.get(arbitre))) {
+                                arbitre = -1;
+                            }
                         }
-                    }
-                    if ((random.nextInt(2)+1)==1){
-                        nombre2=1;
-                        //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
-                        //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(0)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(1)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get((random.nextInt(SalleCombatAndroid.lstAttente.size())))));
-                    }else{
-                        nombre1=1;
-                        //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
-                        //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(0)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get((random.nextInt(SalleCombatAndroid.lstAttente.size())))));
-                    }
-                    //System.out.println("2");
+                        if ((random.nextInt(2) + 1) == 1) {
+                            nombre2 = 1;
+                            //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
+                            //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(0)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(1)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get((random.nextInt(SalleCombatAndroid.lstAttente.size())))));
+                        } else {
+                            nombre1 = 1;
+                            //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
+                            //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(0)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get((random.nextInt(SalleCombatAndroid.lstAttente.size())))));
+                        }
+                        //System.out.println("2");
 
-                }else if (SalleCombatAndroid.lstAttente.size()==SalleCombatAndroid.lstArbitre.size()&&SalleCombatAndroid.lstAttente.containsAll(SalleCombatAndroid.lstArbitre)){
-                    arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
-                    System.out.println("3");
-                    while (nombre1==nombre2){
-                        nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
-                        nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
-                        if (SalleCombatAndroid.lstAttente.get(nombre1).getCourriel()==SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()||
-                                SalleCombatAndroid.lstAttente.get(nombre2).getCourriel()==SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()){
-                            nombre1=0;
-                            nombre2=0;
+                    } else if (SalleCombatAndroid.lstAttente.size() == SalleCombatAndroid.lstArbitre.size() && SalleCombatAndroid.lstAttente.containsAll(SalleCombatAndroid.lstArbitre)) {
+                        arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
+                        System.out.println("3");
+                        while (nombre1 == nombre2) {
+                            nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
+                            nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
+                            if (SalleCombatAndroid.lstAttente.get(nombre1).getCourriel() == SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel() ||
+                                    SalleCombatAndroid.lstAttente.get(nombre2).getCourriel() == SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()) {
+                                nombre1 = 0;
+                                nombre2 = 0;
+                            }
                         }
+                        //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
+                        //System.out.println("Rouge:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)).getCourriel()+" Blanc:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
+                        System.out.println("3");
+                    } else {
+                        System.out.println("4");
+                        //System.out.println(SalleCombatAndroid.lstArbitre.size());
+                        arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
+                        while (nombre1 == nombre2) {
+                            nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
+                            nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
+                            if (SalleCombatAndroid.lstAttente.get(nombre1).getCourriel() == SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel() ||
+                                    SalleCombatAndroid.lstAttente.get(nombre2).getCourriel() == SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()) {
+                                nombre1 = 0;
+                                nombre2 = 0;
+                            }
+                        }
+
+                        //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
+                        //System.out.println("Rouge:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)).getCourriel()+" Blanc:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
+                        //System.out.println("4");
                     }
+
                     //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
-                    //System.out.println("Rouge:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)).getCourriel()+" Blanc:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
-                    System.out.println("3");
-                }else{
-                    System.out.println("4");
-                    //System.out.println(SalleCombatAndroid.lstArbitre.size());
-                    arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
-                    while (nombre1==nombre2){
-                        nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
-                        nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
-                        if (SalleCombatAndroid.lstAttente.get(nombre1).getCourriel()==SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()||
-                                SalleCombatAndroid.lstAttente.get(nombre2).getCourriel()==SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel()){
-                            nombre1=0;
-                            nombre2=0;
-                        }
-                    }
+                    System.out.println("nombre1:" + nombre1 + " nombre2:" + nombre2 + " arbitre:" + arbitre);
+                    System.out.println("Rouge:" + SalleCombatAndroid.lstAttente.get(nombre1).getCourriel() + " Blanc:" + SalleCombatAndroid.lstAttente.get(nombre2).getCourriel() + " Arbitre" + SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel());
+                    combatAndroid(SalleCombatAndroid.lstAttente.get(nombre1), SalleCombatAndroid.lstAttente.get(nombre2), SalleCombatAndroid.lstArbitre.get(arbitre));
 
-                    //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
-                    //System.out.println("Rouge:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)).getCourriel()+" Blanc:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
-                    //System.out.println("4");
+                } else {
+                    System.out.println("pas de combat car liste différentes:" + (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).collect(Collectors.toList()).stream().distinct()).toArray().length);
                 }
-
-                //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
-                System.out.println("nombre1:"+nombre1+" nombre2:"+nombre2+" arbitre:"+arbitre);
-                System.out.println("Rouge:"+SalleCombatAndroid.lstAttente.get(nombre1).getCourriel()+" Blanc:"+SalleCombatAndroid.lstAttente.get(nombre2).getCourriel()+" Arbitre"+SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel());
-                combatAndroid(SalleCombatAndroid.lstAttente.get(nombre1),SalleCombatAndroid.lstAttente.get(nombre2),SalleCombatAndroid.lstArbitre.get(arbitre));
-
-            }else{
-                System.out.println("pas de combat car liste différentes:"+(Stream.concat(SalleCombatAndroid.lstArbitre.stream(),SalleCombatAndroid.lstAttente.stream()).collect(Collectors.toList()).stream().distinct()).toArray().length);
+            } else {
+                System.out.println("pas de combat car attente:" + SalleCombatAndroid.lstAttente.size() + " et arbitre:" + SalleCombatAndroid.lstArbitre.size());
             }
-        }else{
-            System.out.println("pas de combat car attente:"+SalleCombatAndroid.lstAttente.size()+" et arbitre:"+SalleCombatAndroid.lstArbitre.size());
         }
     }
 
