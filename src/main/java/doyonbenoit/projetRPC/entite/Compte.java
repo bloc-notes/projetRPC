@@ -12,6 +12,7 @@ public class Compte {
     private String motDePasse;
     private String alias;
     private Avatar avatar;
+    private long ancienDepuis;
     private Role role;
     private Groupe groupe;
 
@@ -41,6 +42,11 @@ public class Compte {
 
     public void setCourriel(String courriel) {
         this.courriel = courriel;
+    }
+
+    @Column(name = "anciendepuis")
+    public long getAncienDepuis() {
+        return ancienDepuis;
     }
 
     @Column(name = "password")

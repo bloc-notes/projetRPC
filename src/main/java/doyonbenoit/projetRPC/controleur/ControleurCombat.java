@@ -99,7 +99,7 @@ public class ControleurCombat {
 
         List<Examen> lstExamen = examenOad.findByCmJuger(compte);
 
-        lstRetour.add("Historique du membre: " + compte.getCourriel());
+        lstRetour.add("Historique du membre: " + compte.getCourriel()+" ANCIEN: "+formater.format(new Date(compte.getAncienDepuis())));
 
         //Si possède un examen
         if (lstExamen.size() > 0) {
