@@ -240,20 +240,20 @@ public class ControleurKumite {
         Compte cmGagnant = combat.getCmBlanc();
         Compte cmPerdant = combat.getCmRouge();
 
-        combat.setIntGainPertePointBlanc(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
+        combat.setIntGainPertePointBlanc(10);
         combat.setIntGainPerteCreditArbite(1);
     }public void gagnantRouge(Combat combat){
         Compte cmGagnant = combat.getCmRouge();
         Compte cmPerdant = combat.getCmBlanc();
 
-        combat.setIntGainPertePointRouge(cmGagnant.getGroupe().getGroupe().nbPointSelonCeinture(cmPerdant.getGroupe().getGroupe()));
+        combat.setIntGainPertePointRouge(10);
         combat.setIntGainPerteCreditArbite(1);
     }public void gagnantEgalite(Combat combat){
         Compte cmBlanc = combat.getCmBlanc();
         Compte cmRouge = combat.getCmRouge();
 
-        int intNbPointBlanc = Math.round(cmBlanc.getGroupe().getGroupe().nbPointSelonCeinture(cmRouge.getGroupe().getGroupe()) / 2);
-        int intNbPointRouge = Math.round(cmRouge.getGroupe().getGroupe().nbPointSelonCeinture(cmBlanc.getGroupe().getGroupe()) / 2);
+        int intNbPointBlanc = Math.round(5);
+        int intNbPointRouge = Math.round(5);
 
         combat.setIntGainPertePointBlanc(intNbPointBlanc);
         combat.setIntGainPertePointRouge(intNbPointRouge);
