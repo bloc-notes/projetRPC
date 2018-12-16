@@ -43,7 +43,9 @@ public class ControleurKumite {
 
     public void enterSalle(String strCourriel) {
         Compte compte =  compteOad.findByCourriel(strCourriel);
-            SalleCombat.getLstSpectateur().add(0,compte);
+            //SalleCombat.getLstSpectateur().add(0,compte);
+            SalleCombatAndroid.lstSpectateur.add(0,compte);
+            envoyerMessages();
     }
 
     @MessageMapping("/majPositionKumite.{depart}.{arrive}")
