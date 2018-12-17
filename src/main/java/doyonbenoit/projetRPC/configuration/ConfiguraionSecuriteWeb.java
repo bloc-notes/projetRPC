@@ -65,7 +65,7 @@ public class ConfiguraionSecuriteWeb extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //permettre toutes les requêtes
         http.authorizeRequests()
-                .antMatchers("/Compte/tout", "/Combat/Historique/**").permitAll()
+                .antMatchers("/Compte/tout").permitAll()
                 .antMatchers("/kumite/**","/Compte/**", "/Combat/**").authenticated()
                 .antMatchers("/PassageGrade/**").hasAnyAuthority("SENSEI","VENERABLE")
                 .and()

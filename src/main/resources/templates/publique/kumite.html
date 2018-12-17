@@ -239,12 +239,23 @@
                 this.stompClient.subscribe("/kumite/CombatAndroid/2", tick => {
                     let combat = JSON.parse(tick.body);
 
+                    this.Combat.Blanc = combat.cmBlanc;
+                    this.Combat.Rouge = combat.cmRouge;
+                    this.Combat.Arbite = combat.cmArbite;
+
                     this.Combat.ChoixRouge = combat.attRouge;
                     this.Combat.ChoixBlanc = combat.attBlanc;
                 });
 
                 this.stompClient.subscribe("/kumite/CombatAndroid/3", tick => {
                     let combat = JSON.parse(tick.body);
+
+                    this.Combat.Blanc = combat.cmBlanc;
+                    this.Combat.Rouge = combat.cmRouge;
+                    this.Combat.Arbite = combat.cmArbite;
+
+                    this.Combat.ChoixRouge = combat.attRouge;
+                    this.Combat.ChoixBlanc = combat.attBlanc;
 
                     let pointBlanc = combat.intGainPertePointBlanc;
                     let pointRouge = combat.intGainPertePointRouge;
