@@ -1,6 +1,5 @@
 package doyonbenoit.projetRPC.configuration;
 
-import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.entite.SalleCombatAndroid;
 import doyonbenoit.projetRPC.securite.Utilisateur;
 import org.springframework.context.annotation.Configuration;

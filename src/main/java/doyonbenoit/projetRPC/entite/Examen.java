@@ -29,12 +29,6 @@ public class Examen {
         return id;
     }
 
-    //@Temporal(TemporalType.TIMESTAMP)
-    /*
-    public Date gObjDate() {
-        return date;
-    }*/
-
     public Long getDate() {
         return date;
     }
@@ -65,11 +59,6 @@ public class Examen {
     public void setId(Integer id) {
         this.id = id;
     }
-
-    /*
-    public void sObjDate(Date date) {
-        this.date = date;
-    }*/
 
     public void setDate(Long date) {
         this.date = date;

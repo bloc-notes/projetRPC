@@ -1,9 +1,6 @@
 package doyonbenoit.projetRPC.evenement;
 
 import doyonbenoit.projetRPC.controleur.ControleurKumite;
-import doyonbenoit.projetRPC.entite.SalleCombat;
-import doyonbenoit.projetRPC.entite.SalleCombatAndroid;
-import doyonbenoit.projetRPC.enumeration.ActionDeplacement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +56,7 @@ public class EcouteurEvenementStomp implements ApplicationListener<SessionConnec
         StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
         if(sha.getUser() != null) {
             //logger.info("[Disonnected] " + sha.getUser().getName());
-
-            ActionDeplacement acDep = SalleCombat.estDansSalle(sha.getUser().getName());
-            if (acDep != null) {
-                //System.out.println(acDep.toString());
-                //System.out.println("Quitte la salle ...");
-                controleurKumite.quitterSalle(acDep,sha.getUser().getName());
-            }
+            controleurKumite.quitterSalle(sha.getUser().getName());
         }
     }
 

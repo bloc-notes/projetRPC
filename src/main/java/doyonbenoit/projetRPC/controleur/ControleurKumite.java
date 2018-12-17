@@ -3,7 +3,6 @@ package doyonbenoit.projetRPC.controleur;
 import doyonbenoit.projetRPC.OAD.CombatOad;
 import doyonbenoit.projetRPC.OAD.CompteOad;
 import doyonbenoit.projetRPC.entite.*;
-import doyonbenoit.projetRPC.enumeration.ActionDeplacement;
 import doyonbenoit.projetRPC.enumeration.Attaque;
 import doyonbenoit.projetRPC.securite.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +62,10 @@ public class ControleurKumite {
         return "publique/kumite";
     }
 
-    public void quitterSalle(ActionDeplacement acDep, String strCourriel) {
+    public void quitterSalle(String strCourriel) {
         Compte compte =  compteOad.findByCourriel(strCourriel);
-        SalleCombat.retireDeLaSalle(acDep, compte);
-        simpMessagingTemplate.convertAndSend("/kumite/" + acDep.getStrCheminRetourMaj(), new ReponseKumite(compte,"RETRAIT"));
+        SalleCombatAndroid.lstSpectateur.remove(compte);
+        envoyerMessages();
     }
 
     @MessageMapping("/positionAilleur.{courriel}")
