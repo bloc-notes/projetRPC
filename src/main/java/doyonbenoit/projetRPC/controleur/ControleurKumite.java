@@ -253,7 +253,6 @@ public class ControleurKumite {
                     int nombre2 = 0;
                     int arbitre = -1;
                     if (SalleCombatAndroid.lstArbitre.size() == 1) {
-                        System.out.println("un");
                         arbitre = 0;
                         while (nombre1 == nombre2) {
                             nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
@@ -269,7 +268,6 @@ public class ControleurKumite {
 
                         //System.out.println("Rouge:"+compteOad.findAll().get(nombre1).getCourriel()+" Blanc:"+compteOad.findAll().get(nombre2).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
                     } else if (SalleCombatAndroid.lstAttente.size() == 2) {
-                        System.out.println("2");
                         while (arbitre == -1) {
                             arbitre = (random.nextInt(SalleCombatAndroid.lstArbitre.size()));
                             if (SalleCombatAndroid.lstAttente.contains(SalleCombatAndroid.lstArbitre.get(arbitre))) {
@@ -289,7 +287,6 @@ public class ControleurKumite {
 
                     } else if (SalleCombatAndroid.lstAttente.size() == SalleCombatAndroid.lstArbitre.size() && SalleCombatAndroid.lstAttente.containsAll(SalleCombatAndroid.lstArbitre)) {
                         arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
-                        System.out.println("3");
                         while (nombre1 == nombre2) {
                             nombre1 = random.nextInt(SalleCombatAndroid.lstAttente.size());
                             nombre2 = random.nextInt(SalleCombatAndroid.lstAttente.size());
@@ -300,10 +297,7 @@ public class ControleurKumite {
                             }
                         }
                         //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
-                        //System.out.println("Rouge:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)).getCourriel()+" Blanc:"+compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)).getCourriel()+" Arbitre"+compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)).getCourriel());
-                        System.out.println("3");
                     } else {
-                        System.out.println("4");
                         //System.out.println(SalleCombatAndroid.lstArbitre.size());
                         arbitre = random.nextInt(SalleCombatAndroid.lstArbitre.size());
                         while (nombre1 == nombre2) {
@@ -322,15 +316,9 @@ public class ControleurKumite {
                     }
 
                     //combatAndroid(compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre1)),compteOad.findByCourriel(SalleCombatAndroid.lstAttente.get(nombre2)),compteOad.findByCourriel(SalleCombatAndroid.lstArbitre.get(arbitre)));
-                    System.out.println("nombre1:" + nombre1 + " nombre2:" + nombre2 + " arbitre:" + arbitre);
-                    System.out.println("Rouge:" + SalleCombatAndroid.lstAttente.get(nombre1).getCourriel() + " Blanc:" + SalleCombatAndroid.lstAttente.get(nombre2).getCourriel() + " Arbitre" + SalleCombatAndroid.lstArbitre.get(arbitre).getCourriel());
                     combatAndroid(SalleCombatAndroid.lstAttente.get(nombre1), SalleCombatAndroid.lstAttente.get(nombre2), SalleCombatAndroid.lstArbitre.get(arbitre));
 
-                } else {
-                    System.out.println("pas de combat car liste différentes:" + (Stream.concat(SalleCombatAndroid.lstArbitre.stream(), SalleCombatAndroid.lstAttente.stream()).collect(Collectors.toList()).stream().distinct()).toArray().length);
                 }
-            } else {
-                System.out.println("pas de combat car attente:" + SalleCombatAndroid.lstAttente.size() + " et arbitre:" + SalleCombatAndroid.lstArbitre.size());
             }
         }
     }

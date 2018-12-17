@@ -125,7 +125,6 @@ public class SalleCombatAndroid {
         compteComplet.put("NbPoint", intNbPointCombat);
         compteComplet.put("Credit", intSoldeTotal);
         compteComplet.put("NbCombatArbiter", intNbCombatArbitrer);
-        System.out.println(compte.getCourriel()+" Points:"+intNbPointCombat+" Credits:"+intSoldeTotal+" nbArbitrer"+intNbCombatArbitrer);
         return compteComplet;
     }
 
