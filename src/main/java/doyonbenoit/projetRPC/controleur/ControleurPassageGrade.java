@@ -97,34 +97,4 @@ public class ControleurPassageGrade {
 
         return valeurRetour;
     }
-
-    /*@GetMapping(value = "/Mobile/{courriel}.{booPasseOuCoule}")
-    public ResponseEntity<Void>  PasseOuCoule(@PathVariable String courriel,@PathVariable Boolean booPasseOuCoule) {
-
-        SalleCombatAndroid salleCombatAndroid = new SalleCombatAndroid();
-        HashMap<String, Object> infoCompteComplet = salleCombatAndroid.calculePoint(courriel, combatOad,compteOAD,examenOad);
-
-        Compte compte = (Compte) infoCompteComplet.get(EnumInfoCompte.COMPTE.getNom());
-        int intNbPointCombat = (int) infoCompteComplet.get(EnumInfoCompte.POINT.getNom());
-        int intSoldeTotal = (int) infoCompteComplet.get(EnumInfoCompte.CREDIT.getNom());
-        Compte compteExaminateur = compteOAD.findByCourriel("v1@dojo");
-        if ((compte.getGroupe().getId()<7)&&(intNbPointCombat>=100)&&(intSoldeTotal>=10)) {
-            Examen examen = new Examen();
-            examen.setDate(Calendar.getInstance().getTime().getTime());
-            examen.setCmJuger(compte);
-            examen.setCmExaminateur(compteExaminateur);
-            examen.setBooReussit(!booPasseOuCoule);
-            examen.setCeinture(compte.getGroupe());
-            examenOad.save(examen);
-            if (!booPasseOuCoule) {
-                int intRangCeinture = compte.getGroupe().getId();
-                EnumGroupe gpSuivant = EnumGroupe.values()[intRangCeinture + 1];
-                compte.setGroupe(new Groupe(gpSuivant.ordinal(), gpSuivant));
-                compteOAD.save(compte);
-            }
-            return ResponseEntity.ok().build();
-        }else {
-            return ResponseEntity.badRequest().build();
-        }
-    }*/
 }
